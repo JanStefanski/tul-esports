@@ -1,1 +1,1 @@
-web: bin/start-nginx waitress-serve --unix-socket="/tmp/uniapp.sock" --trusted-proxy 'localhost' --trusted-proxy-headers="x-forwarded-for x-forwarded-host x-forwarded-proto x-forwarded-port" --log-untrusted-proxy-headers --clear-untrusted-proxy-headers --threads ${WEB_CONCURRENCY: 4} server:app
+web: bin/start-nginx waitress-serve --unix-socket="/tmp/uniapp.sock" --trusted-proxy 'localhost' --trusted-proxy-headers="x-forwarded-for x-forwarded-host x-forwarded-proto x-forwarded-port" server:app
