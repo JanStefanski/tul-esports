@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <title>{{ indexPage.title }}</title>
+</head>
+<body>
+<form action="/stats" method="post">
+    <label for="summoner">{{ indexPage.summonerNameFormLabel }}</label>
+    <input type="text" id="summoner" name="summoner">
+    <label for="region">{{ indexPage.regionFormLabel }}</label>
+    <select id="region" name="region">
+        <option value="eune" selected>EUNE</option>
+        <option value="euw">EUW</option>
+    </select>
+    <br>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <input type="submit" value="{{ indexPage.getStatsFormButton }}">
+</form>
+</body>
+</html>
+

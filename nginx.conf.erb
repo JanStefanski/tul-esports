@@ -1,0 +1,44 @@
+daemon off;
+worker_processes auto;
+
+events {
+   use epoll;
+   accept_mutex on;
+   worker_connections 1024;
+   multi_accept on;
+}
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+
+    upstream uniapp {
+      server unix:///tmp/uniapp.sock;
+    }
+    server {
+    listen <%= ENV["PORT"] %>;
+    server_name  tul-esports.herokuapp.com;
+    charset     utf-8;
+
+
+      # static
+      location / {
+        proxy_set_header        Host $host;
+        proxy_cookie_path / "/; HTTPOnly; SameSite=strict";
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+
+        proxy_pass              http://uniapp;
+      }
+    }
+}
+

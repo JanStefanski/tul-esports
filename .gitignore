@@ -68,3 +68,5 @@ venv.bak/
 pythonenv*
 
 /.idea/
+
+server/config/config.json
