@@ -1,17 +1,17 @@
 from flask import Flask, make_response, render_template, request, jsonify
-from flask_wtf.csrf import CSRFProtect
 from waitress import serve
 from . import mongo_util
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'gh48hfsjkdh943uro2jf92pafj483la3'
-csrf = CSRFProtect(app)
+
 indexPage = {
     "title": "TUL Esports - LoL",
     "summonerNameFormLabel": "Summoner Name",
     "regionFormLabel": "Region",
     "getStatsFormButton": "Get Stats",
 }
+
 
 @app.after_request
 def apply_sec_headers(response):
