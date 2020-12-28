@@ -6,7 +6,7 @@
     <title>{{ indexPage.title }}</title>
 </head>
 <body>
-<form action="/stats" method="post">
+<form action="/get-statistics-report" method="post">
     <label for="summoner">{{ indexPage.summonerNameFormLabel }}</label>
     <input type="text" id="summoner" name="summoner">
     <label for="region">{{ indexPage.regionFormLabel }}</label>
@@ -15,6 +15,7 @@
         <option value="euw">EUW</option>
     </select>
     <br>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token() }}">
     <input type="submit" value="{{ indexPage.getStatsFormButton }}">
 </form>
 </body>

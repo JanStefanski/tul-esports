@@ -6,7 +6,7 @@ __pycache__/
 *$py.class
 
 *.so
-
+src/
 build/
 develop-eggs/
 dist/
