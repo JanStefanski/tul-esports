@@ -1,11 +1,9 @@
 from flask import Flask, make_response, render_template, request, jsonify, redirect
-from waitress import serve
 from . import mongo_util
 from flask_seasurf import SeaSurf
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'gh48hfsjkdh943uro2jf92pafj483la3'
-# app.config['IS_PROD'] = False
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
@@ -34,6 +32,8 @@ def apply_sec_headers(response):
     response.headers[
         "X-WebKit-CSP"] = "default-src 'none'; script-src 'self' https://hcaptcha.com https://*.hcaptcha.com; object-src 'none'; style-src 'self' https://hcaptcha.com https://*.hcaptcha.com; img-src 'self'; media-src 'self'; frame-src https://hcaptcha.com https://*.hcaptcha.com; font-src 'self'; connect-src 'self' https://hcaptcha.com https://*.hcaptcha.com; frame-ancestors 'none'; form-action 'self';"
     response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Access-Control-Allow-Origin"] = "https://assets.hcaptcha.com"
     # response.headers["Vary"] = "Origin"
