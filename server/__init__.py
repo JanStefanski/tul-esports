@@ -5,13 +5,13 @@ from flask_seasurf import SeaSurf
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'gh48hfsjkdh943uro2jf92pafj483la3'
-app.config['IS_PROD'] = False
+# app.config['IS_PROD'] = False
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
 app.config['CSRF_COOKIE_NAME'] = 'csrfmiddlewaretoken'
 app.config['CSRF_COOKIE_SAMESITE'] = 'Strict'
 app.config['CSRF_COOKIE_HTTPONLY'] = True
-app.config['CSRF_COOKIE_SECURE'] = app.config.get('IS_PROD')
+app.config['CSRF_COOKIE_SECURE'] = True
 
 csrf = SeaSurf(app)
 
