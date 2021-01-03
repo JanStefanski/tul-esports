@@ -69,4 +69,6 @@ pythonenv*
 
 /.idea/
 
-server/config/config.json
+server/utils/config/config.json
+/design/
+/server/download/

@@ -1,0 +1,189 @@
+"""
+    league_api_util.py
+    ----------------
+
+    Mine - Janek's implementation of Riot API.
+    If it's terrible, please refrain from yelling at me ;;
+"""
+import requests
+import os
+import tarfile
+import json
+from typing import Iterable
+from .config.config_loader import CONFIG
+from rich.console import Console
+
+console = Console()
+
+def get_current_patch() -> str:
+    """
+    Helper function that fetches current league patch to be used with Data Dragon
+    :return: String with current patch version
+    """
+    req = requests.get("https://ddragon.leagueoflegends.com/api/versions.json")
+    return json.loads(req.text)[0]
+
+def download_data_dragon(location:str = 'server/download', version:str = get_current_patch()):
+    """
+    Helper Function used to download data dragon if necessary. Highly doubt it would be really that necessary, but just in case.
+    :param location:
+    :param version:
+    :return: None
+    """
+    with console.status("[bold green]Processing Data Dragon...", spinner='dots') as status:
+        req = requests.get("https://ddragon.leagueoflegends.com/cdn/dragontail-{}.tgz".format(version))
+        folder = os.path.join(os.getcwd(), location)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+            console.log(f"Destination folder {location} created")
+        with open(os.path.join(folder, 'dragontail-{}.tgz'.format(version)), 'wb') as dragon_file:
+            dragon_file.write(req.content)
+            console.log(f"Data Dragon v.{version} succesfully downloaded...")
+        with tarfile.open(os.path.join(folder, 'dragontail-{}.tgz'.format(version))) as dragon_file:
+            console.log("Unpacking Data Dragon...")
+            dragon_file.extractall(os.path.join(folder, version))
+    console.log("Finished")
+
+def get_champion_id(champion_name: str) -> int:
+    """
+    Helper function that fetches ID of a given champion to be used with Riot API & Data Dragon
+    Opposite of :func:`get_champion_name()`
+    :param champion_name: Name of the champion
+    :return: Int with Champion ID
+    """
+    req = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion.json")
+    champion_id = json.loads(req.text)["data"][champion_name.capitalize()]["key"]
+    return int(champion_id)
+
+def get_champion_name(champion_id: int) -> str:
+    """
+    Helper function that fetches name of a given champion  to be used with Riot API & Data Dragon
+    Opposite of :func:`get_champion_id()`
+    :param champion_id: Int with Champion ID
+    :return: Name of the champion
+    """
+    req = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion.json")
+    champion_name = list(filter(lambda champ: champ['key'] == str(champion_id), json.loads(req.text)["data"].values()))[0]['id']
+    return str(champion_name)
+
+
+def get_champion_info(champion_name=None, champion_id=None) -> dict:
+    if champion_name and champion_id:
+        raise SyntaxError("You cannot define both champion name and champion id. Use one of them")
+    else:
+        if champion_id:
+            if type(champion_id) != int:
+                raise TypeError(f"Champion id ought to be a int type. Current type: {type(champion_id)}")
+            else:
+                champion_name = get_champion_name(champion_id)
+        req = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion/{champion_name.capitalize()}.json")
+        return json.loads(req.text)
+
+
+class SummonerNotFoundError(Exception):
+    """Raised when given summoner does not exist"""
+    def __init__(self, summoner_name, region):
+        err = f"Summoner {summoner_name} does not exist in {region} region"
+        super().__init__(err)
+
+
+class LeaguePlayer:
+
+    def __init__(self, summoner_name: str, region: str):
+        """
+        Defines the :class:`LeaguePlayer` to use with API
+        :param summoner_name: Name of the summoner
+        :param region: A region where the summoner has been registered. Available options: "eune", "euw"
+        """
+        region_mappings = {"eune": "eun1", "euw": "euw1"}
+        self.key = CONFIG.league_api_key
+        self.summoner_name = summoner_name
+        self.region = region_mappings[region]
+        # TODO: Make better exceptions and exception handling.
+        #  It should be different exceptions if key is invalid and different if player is not found
+        try:
+            self.ids = self.__get_summoner_ids()
+            self.position = self.__determine_primary_position()
+        except KeyError:
+            raise SummonerNotFoundError(summoner_name, region)
+
+    def __get_summoner_ids(self) -> dict:
+        req = requests.get(
+            "https://{0}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{1}".format(self.region,
+                                                                                         self.summoner_name),
+            headers={"X-Riot-Token": self.key})
+        return json.loads(req.text)
+
+    def ranked_positions(self, queues:Iterable[str] = ("flex", "solo")) -> list:
+        """
+        Tries to retrieve ranked positions of the player. If player has no ranked positions, it returns empty list.
+        :param queues: :class:`Iterable` with one or more queue names.
+        :return: :class:`List` with response
+        """
+        queue_types = {"flex": "RANKED_FLEX_SR", "solo": "RANKED_SOLO_5x5"}
+        req = requests.get(
+            "https://{0}.api.riotgames.com/lol/league/v4/entries/by-summoner/{1}".format(self.region, self.ids['id']),
+            headers={"X-Riot-Token": self.key})
+        result = filter(lambda ranking: ranking["queueType"] in [queue_types[qt] for qt in queues],
+                        json.loads(req.text))
+        return list(result)
+
+    def matches(self, champion=None, queue=None, season=None) -> list:
+        """
+        Returns matches of the summoner
+
+        :param champion: (optional) Name of the champion (or champions, then list of names) to retrieve matches with
+        :param queue: (optional) Queue type of the matches
+        :param season: (optional) Season matches has been played in
+        :return: :class:`Dictionary` with matches
+        """
+        params = {
+            "champion": (get_champion_id(champion) if type(champion) is str else [get_champion_id(ch) for ch in champion]) if champion else None, # I am sincerely sorry for this line
+            "queue": queue,
+            "season": season
+        }
+        params = {key: value for key, value in params.items() if value is not None}
+        req = requests.get(
+            "https://{0}.api.riotgames.com/lol/match/v4/matchlists/by-account/{1}".format(self.region,
+                                                                                          self.ids['accountId']),
+            headers={"X-Riot-Token": self.key}, params=params)
+        matches = json.loads(req.text)
+        matches = matches["matches"] if "matches" in matches else []  # Kind of cursed line if you ask me
+        return matches
+
+    def __determine_primary_position(self, min_games: int = 20) -> str:
+        """
+        Attempts to determine primary position of the player.
+        If not enough games in queue type are found to determine, it looks in the next queue.
+
+        Queue priority order:
+          0. Ranked solo (420)
+          1. Ranked Flex (440)
+          2. Normal Draft (400)
+        :param min_games: Minimum games in specific queue to determine the players' role
+        :return: One of five possible values: `top` `jungle` `mid` `adc` `support`
+        """
+        relevant_queue_types = [420, 440, 400]
+        lanes = ["BOTTOM", "JUNGLE", "MID", "TOP"]
+        relevant_matches = []
+        grouped_matches = {}  # I use this because I'm special
+
+        for qt in relevant_queue_types:
+            relevant_matches = self.matches(queue=qt)
+            if len(relevant_matches) >= min_games:
+                break
+
+        # All of this looks like this, so we need to group it accordingly.
+        # LANES -|_ MID
+        #        |_ JUNGLE
+        #        |_ TOP
+        #        |_ BOTTOM -|_ ADC
+        #                   |_ SUPPORT
+        # Probably a stupid solution..
+        for lane in lanes:
+            grouped_matches[lane] = list(filter(lambda match: match["lane"] == lane, relevant_matches))
+        grouped_matches["ADC"] = list(filter(lambda match: match["role"] == "DUO_CARRY", grouped_matches["BOTTOM"]))
+        grouped_matches["SUPPORT"] = list(
+            filter(lambda match: match["role"] == "DUO_SUPPORT", grouped_matches["BOTTOM"]))
+        del grouped_matches["BOTTOM"]
+        return max([(len(matches), role) for role, matches in grouped_matches.items()])[1].lower()
