@@ -3,6 +3,8 @@ from .utils import league_api_util, i18n_util
 from flask_seasurf import SeaSurf
 
 app = Flask(__name__)
+
+# TODO: Actual environment vars instead of hardcoded keys, secrets & vars
 app.config['SECRET_KEY'] = 'gh48hfsjkdh943uro2jf92pafj483la3'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SECURE'] = True
@@ -27,13 +29,13 @@ def apply_sec_headers(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
     response.headers["X-XSS-Protection"] = "1; mode=block"
-    response.headers["Access-Control-Allow-Origin"] = "https://assets.hcaptcha.com"
     return response
 
 
 @app.route("/")
 def index_page():
-    idx_page = i18n_util.I18n('indexPage').load_translation(request.args.get('lang') if request.args.get('lang') else 'en-GB')
+    idx_page = i18n_util.I18n('indexPage').load_translation(request.args.get('lang') or 'en-GB')
+    # TODO: Whole DB util, must decide if it will be MongoDB (probably more work, but more versatile) or SQLite
     ranked_players = [
         { "name": "Player I", "rank": "Platinum IV", "role": "Mid"},
         { "name": "Player II", "rank": "Gold II", "role": "Jungle"},
@@ -51,6 +53,7 @@ def validate_region(region: str) -> bool:
 
 @app.route("/get-statistics-report", methods=['POST'])
 def stats_renderer():
+    # TODO: Sanitizing inputs to protect the stats page from XSS
     code = 200
     summoner = request.form['summoner']
     region = request.form['region']
@@ -64,10 +67,12 @@ def stats_renderer():
         status = {"Error": "Bad Request"}
     return make_response(jsonify(status), code)
 
+# 404 page copied from apache
 @app.errorhandler(404)
 def sec_404(error):
     return render_template('404.html'), 404
-    
+
+# Dir traversal easter egg
 @app.route("/.htaccess")
 @app.route("/sitemap.xml")
 def sec_redirect():

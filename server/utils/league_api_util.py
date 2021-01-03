@@ -2,18 +2,13 @@
     league_api_util.py
     ----------------
 
-    Mine - Janek's implementation of Riot API.
-    If it's terrible, please refrain from yelling at me ;;
+    Scuffed implementation of Riot API.
+    If it's terrible, please refrain from yelling at me ;; ~ Janek
 """
 import requests
-import os
-import tarfile
 import json
 from typing import Iterable
-from .config.config_loader import CONFIG
-from rich.console import Console
-
-console = Console()
+from .config.config_loader import ConfigLoader
 
 def get_current_patch() -> str:
     """
@@ -23,26 +18,6 @@ def get_current_patch() -> str:
     req = requests.get("https://ddragon.leagueoflegends.com/api/versions.json")
     return json.loads(req.text)[0]
 
-def download_data_dragon(location:str = 'server/download', version:str = get_current_patch()):
-    """
-    Helper Function used to download data dragon if necessary. Highly doubt it would be really that necessary, but just in case.
-    :param location:
-    :param version:
-    :return: None
-    """
-    with console.status("[bold green]Processing Data Dragon...", spinner='dots') as status:
-        req = requests.get("https://ddragon.leagueoflegends.com/cdn/dragontail-{}.tgz".format(version))
-        folder = os.path.join(os.getcwd(), location)
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-            console.log(f"Destination folder {location} created")
-        with open(os.path.join(folder, 'dragontail-{}.tgz'.format(version)), 'wb') as dragon_file:
-            dragon_file.write(req.content)
-            console.log(f"Data Dragon v.{version} succesfully downloaded...")
-        with tarfile.open(os.path.join(folder, 'dragontail-{}.tgz'.format(version))) as dragon_file:
-            console.log("Unpacking Data Dragon...")
-            dragon_file.extractall(os.path.join(folder, version))
-    console.log("Finished")
 
 def get_champion_id(champion_name: str) -> int:
     """
@@ -96,7 +71,7 @@ class LeaguePlayer:
         :param region: A region where the summoner has been registered. Available options: "eune", "euw"
         """
         region_mappings = {"eune": "eun1", "euw": "euw1"}
-        self.key = CONFIG.league_api_key
+        self.key = ConfigLoader().league_api_key # TODO: When .env will be done properly, this will have to be changed.
         self.summoner_name = summoner_name
         self.region = region_mappings[region]
         # TODO: Make better exceptions and exception handling.
@@ -128,6 +103,12 @@ class LeaguePlayer:
                         json.loads(req.text))
         return list(result)
 
+    def champion_mastery(self):
+        # TODO: Implement champion mastery from League API
+        #  ALL Masteries: https://developer.riotgames.com/apis#champion-mastery-v4/GET_getAllChampionMasteries
+        #  Specific Mastery: https://developer.riotgames.com/apis#champion-mastery-v4/GET_getChampionMastery
+        raise NotImplementedError
+
     def matches(self, champion=None, queue=None, season=None) -> list:
         """
         Returns matches of the summoner
@@ -142,6 +123,9 @@ class LeaguePlayer:
             "queue": queue,
             "season": season
         }
+        # TODO: Now only retrieves 100 last matches with specific params THIS IS VERY WRONG AND SHOULDN'T BE A CASE!
+        #  I'll need to make use of the beginIndex and endIndex as described in Riot API (https://developer.riotgames.com/apis#match-v4/GET_getMatchlist)
+        #  and possibly make this function a generator of matches with usage of yield
         params = {key: value for key, value in params.items() if value is not None}
         req = requests.get(
             "https://{0}.api.riotgames.com/lol/match/v4/matchlists/by-account/{1}".format(self.region,

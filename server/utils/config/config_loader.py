@@ -16,6 +16,3 @@ class ConfigLoader:
                 self.league_api_key = json_config['league_api_key']
         else:   # In other case (production), let us search for environment vars for keys.
             self.league_api_key = os.environ['LEAGUE_API_KEY']
-
-
-CONFIG = ConfigLoader()
