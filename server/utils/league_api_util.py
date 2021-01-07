@@ -42,7 +42,7 @@ def get_champion_name(champion_id: int) -> str:
     return str(champion_name)
 
 
-def get_champion_info(champion_name=None, champion_id=None) -> dict:
+def get_champion_info(champion_name:str=None, champion_id:int=None) -> dict:
     if champion_name and champion_id:
         raise SyntaxError("You cannot define both champion name and champion id. Use one of them")
     else:

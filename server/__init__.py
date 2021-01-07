@@ -1,5 +1,5 @@
-from flask import Flask, make_response, render_template, request, jsonify, redirect
-from .utils import league_api_util, i18n_util
+from flask import Flask, make_response, render_template, request, jsonify, redirect, escape
+from .utils import league_api_util, i18n_util, db_util
 from flask_seasurf import SeaSurf
 
 app = Flask(__name__)
@@ -36,13 +36,7 @@ def apply_sec_headers(response):
 def index_page():
     idx_page = i18n_util.I18n('indexPage').load_translation(request.args.get('lang') or 'en-GB')
     # TODO: Whole DB util, must decide if it will be MongoDB (probably more work, but more versatile) or SQLite
-    ranked_players = [
-        { "name": "Player I", "rank": "Platinum IV", "role": "Mid"},
-        { "name": "Player II", "rank": "Gold II", "role": "Jungle"},
-        { "name": "Player III", "rank": "Gold II", "role": "ADC"},
-        { "name": "Player IV", "rank": "Gold IV", "role": "Support"},
-        { "name": "Player V", "rank": "Silver I", "role": "Top"}
-    ]
+    ranked_players = db_util.get_ranking()
     return render_template('index.html', rankedPlayers=enumerate(ranked_players), indexPage=idx_page)
 
 def validate_summoner_name(sname: str) -> bool:
@@ -53,15 +47,16 @@ def validate_region(region: str) -> bool:
 
 @app.route("/get-statistics-report", methods=['POST'])
 def stats_renderer():
-    # TODO: Sanitizing inputs to protect the stats page from XSS
     code = 200
-    summoner = request.form['summoner']
-    region = request.form['region']
+    summoner = escape(request.form['summoner'])
+    region = escape(request.form['region'])
     if request.method == 'POST' and validate_summoner_name(summoner) and validate_region(region):
         status = {"name": summoner, "region": region}
         player = league_api_util.LeaguePlayer(summoner, region)
         status["ranking"] = player.ranked_positions()
         status["position"] = player.position
+        # if request.args.get('save'):
+        db_util.save_player(player=player)
     else:
         code = 400
         status = {"Error": "Bad Request"}
