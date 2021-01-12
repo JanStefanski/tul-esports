@@ -16,8 +16,6 @@ current_season = 10
 
 db_path = os.path.join(os.getcwd(), 'server/db/tulesports.db')
 
-# conn =
-
 tier_list = ["IRON", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "MASTER", "GRANDMASTER", "CHALLENGER"]
 
 rank_list = ["IV", "III", "II", "I"]
@@ -31,7 +29,6 @@ def save_player(player: LeaguePlayer):
             player.ids['summonerLevel'], player.ids['puuid'], player.position
         )
         c = conn.cursor()
-        # TODO: Update cause for icon, summoner_name, summoner_level & role, because these values can be modified
         c.execute(
             """INSERT INTO players(summoner_id, account_id, summoner_name, region, profile_icon_id, summoner_level, puuid, role)
              VALUES (?,?,?,?,?,?,?,?)
@@ -54,6 +51,7 @@ def save_player(player: LeaguePlayer):
 def get_ranking(limit: int = 5, page: int = 0) -> list:
     with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
+        # TODO: Check if usage of """ is secure in this case
         ranking = c.execute("""
         SELECT players.summoner_name,
        players.profile_icon_id,
@@ -70,8 +68,5 @@ from players
                      group by summoner_id) r on players.summoner_id = r.summoner_id
 order by tier desc, rank desc, lp desc
 limit (?) offset (?);""", (limit, page * limit))
-        r = []
-        for player in ranking:
-            if not list(filter(lambda pl: pl["name"] == player[0], r)):
-                r.append({"name": player[0], "rank": f"{tier_list[player[3]]} {rank_list[player[4]]}", "role": player[2].capitalize()})
+        r = [{"name": player[0], "rank": f"{tier_list[player[3]]} {rank_list[player[4]]}", "role": player[2].capitalize()} for player in ranking]
         return r

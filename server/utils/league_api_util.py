@@ -26,7 +26,7 @@ def get_champion_id(champion_name: str) -> int:
     :param champion_name: Name of the champion
     :return: Int with Champion ID
     """
-    req = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion.json")
+    req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion.json")
     champion_id = json.loads(req.text)["data"][champion_name.capitalize()]["key"]
     return int(champion_id)
 
@@ -37,7 +37,7 @@ def get_champion_name(champion_id: int) -> str:
     :param champion_id: Int with Champion ID
     :return: Name of the champion
     """
-    req = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion.json")
+    req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion.json")
     champion_name = list(filter(lambda champ: champ['key'] == str(champion_id), json.loads(req.text)["data"].values()))[0]['id']
     return str(champion_name)
 
@@ -51,7 +51,7 @@ def get_champion_info(champion_name:str=None, champion_id:int=None) -> dict:
                 raise TypeError(f"Champion id ought to be a int type. Current type: {type(champion_id)}")
             else:
                 champion_name = get_champion_name(champion_id)
-        req = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion/{champion_name.capitalize()}.json")
+        req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion/{champion_name.capitalize()}.json")
         return json.loads(req.text)
 
 
@@ -103,11 +103,15 @@ class LeaguePlayer:
                         json.loads(req.text))
         return list(result)
 
-    def champion_mastery(self):
+    def champion_mastery(self) -> list:
         # TODO: Implement champion mastery from League API
         #  ALL Masteries: https://developer.riotgames.com/apis#champion-mastery-v4/GET_getAllChampionMasteries
         #  Specific Mastery: https://developer.riotgames.com/apis#champion-mastery-v4/GET_getChampionMastery
-        raise NotImplementedError
+        # raise NotImplementedError
+        req = requests.get(
+            "https://{0}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/{1}".format(self.region, self.ids['id']),
+            headers={"X-Riot-Token": self.key})
+        return json.loads(req.text)
 
     def matches(self, champion=None, queue=None, season=None) -> list:
         """
@@ -147,6 +151,8 @@ class LeaguePlayer:
         :param min_games: Minimum games in specific queue to determine the players' role
         :return: One of five possible values: `top` `jungle` `mid` `adc` `support`
         """
+
+        # TODO: This method is really damn slow right now. Optimize this heresy BEFORE it goes to prod!
         relevant_queue_types = [420, 440, 400]
         lanes = ["BOTTOM", "JUNGLE", "MID", "TOP"]
         relevant_matches = []

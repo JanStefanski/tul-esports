@@ -14,19 +14,19 @@
 
 <body>
 <nav class="navbar navbar-expand-md navigation-clean navbar-dark">
-    <div class="container"><a class="navbar-brand" href="#">{{ indexPage.navLogo }}</a>
+    <div class="container"><a class="navbar-brand" href="#">{{ navBar.navLogo }}</a>
         <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="/leaderboards">{{ indexPage.navLeaderboardsLinkText }}<br></a></li>
-                <li class="nav-item"><a class="nav-link" href="#">{{ indexPage.navGetReportLinkText }}<br></a></li>
+                <li class="nav-item"><a class="nav-link" href="/leaderboards">{{ navBar.navLeaderboardsLinkText }}<br></a></li>
+                <li class="nav-item"><a class="nav-link" href="#">{{ navBar.navGetReportLinkText }}<br></a></li>
                 <li class="nav-item dropdown">
                     <a class="dropdown-toggle nav-link" data-toggle="dropdown"
-                       aria-expanded="false" href="#">{{ indexPage.navLanguageSelector }}</a>
+                       aria-expanded="false" href="#">{{ navBar.navLanguageSelector }}</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/?lang=en-GB">English</a>
-                        <a class="dropdown-item" href="/?lang=pl">Polski</a>
+                        <a class="dropdown-item" href="?lang=en-GB">English</a>
+                        <a class="dropdown-item" href="?lang=pl">Polski</a>
                     </div>
                 </li>
             </ul>

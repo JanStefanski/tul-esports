@@ -72,3 +72,7 @@ pythonenv*
 server/utils/config/config.json
 /design/
 /server/download/
+
+server/db/
+
+presentation/
