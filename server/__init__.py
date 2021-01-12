@@ -56,7 +56,7 @@ def validate_region(region: str) -> bool:
     return region in ["eune", "euw"]
 
 
-@app.route("/get-statistics-report", methods=['POST'])
+@app.route("/get-statistics-report", methods=['GET', 'POST'])
 def stats_renderer():
     language = request.args.get('lang') or 'en-GB'
     code = 200
@@ -74,9 +74,19 @@ def stats_renderer():
             chmp_id = status["mastery"][0]["championId"]
             skin_name = league_api_util.get_champion_info(champion_id=chmp_id)["data"]
             skin_name = f"{list(skin_name.keys())[0]}_{random.choice(skin_name[list(skin_name.keys())[0]]['skins'])['num']}"
+            stats_page_texts = {
+                "currentPatch": player.current_patch,
+                "summonerName": player.summoner_name,
+                "summonerLevel": player.ids['summonerLevel'],
+                "summonerRankAndPosition": player.position.capitalize(),
+                "assets": {
+                    "summonerIcon": player.ids['profileIconId'],
+                    "highestMasteryChampionRandomSkin": skin_name
+                }
+            }
             # if request.args.get('save'):
             #     db_util.save_player(player=player)
-            return render_template('stats.html', indexPage={}, navBar=navbar, statsPage={"highestMasteryChampionRandomSkin": skin_name})
+            return render_template('stats.html', indexPage={}, navBar=navbar, statsPage=stats_page_texts)
         except league_api_util.SummonerNotFoundError:
             code = 400
             status = {"Error": f"Summoner {summoner} not found in {region} region"}
@@ -88,7 +98,7 @@ def stats_renderer():
 
 # 404 page copied from apache
 @app.errorhandler(404)
-def sec_404():
+def sec_404(error):
     return render_template('404.html'), 404
 
 

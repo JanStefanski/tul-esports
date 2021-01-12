@@ -84,3 +84,7 @@
     font-size: 12px;
     background: linear-gradient(#54250d, #bb9e4b 50%, #54250d);
 }
+
+.ranking .disclaimer {
+    font-size: 10px;
+}

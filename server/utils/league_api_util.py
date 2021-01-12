@@ -19,30 +19,32 @@ def get_current_patch() -> str:
     return json.loads(req.text)[0]
 
 
-def get_champion_id(champion_name: str) -> int:
+def get_champion_id(champion_name: str, current_patch:str=None) -> int:
     """
     Helper function that fetches ID of a given champion to be used with Riot API & Data Dragon
     Opposite of :func:`get_champion_name()`
+    :param current_patch: (optional) String with Current Patch
     :param champion_name: Name of the champion
     :return: Int with Champion ID
     """
-    req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion.json")
+    req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{current_patch or get_current_patch()}/data/en_US/champion.json")
     champion_id = json.loads(req.text)["data"][champion_name.capitalize()]["key"]
     return int(champion_id)
 
-def get_champion_name(champion_id: int) -> str:
+def get_champion_name(champion_id: int, current_patch:str=None) -> str:
     """
     Helper function that fetches name of a given champion  to be used with Riot API & Data Dragon
     Opposite of :func:`get_champion_id()`
+    :param current_patch: (optional) String with Current Patch
     :param champion_id: Int with Champion ID
     :return: Name of the champion
     """
-    req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion.json")
+    req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{current_patch or get_current_patch()}/data/en_US/champion.json")
     champion_name = list(filter(lambda champ: champ['key'] == str(champion_id), json.loads(req.text)["data"].values()))[0]['id']
     return str(champion_name)
 
 
-def get_champion_info(champion_name:str=None, champion_id:int=None) -> dict:
+def get_champion_info(champion_name:str=None, champion_id:int=None, current_patch=None) -> dict:
     if champion_name and champion_id:
         raise SyntaxError("You cannot define both champion name and champion id. Use one of them")
     else:
@@ -50,8 +52,8 @@ def get_champion_info(champion_name:str=None, champion_id:int=None) -> dict:
             if type(champion_id) != int:
                 raise TypeError(f"Champion id ought to be a int type. Current type: {type(champion_id)}")
             else:
-                champion_name = get_champion_name(champion_id)
-        req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{get_current_patch()}/data/en_US/champion/{champion_name.capitalize()}.json")
+                champion_name = get_champion_name(champion_id, current_patch=current_patch)
+        req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{current_patch or get_current_patch()}/data/en_US/champion/{champion_name}.json")
         return json.loads(req.text)
 
 
@@ -74,6 +76,7 @@ class LeaguePlayer:
         self.key = ConfigLoader().league_api_key # TODO: When .env will be done properly, this will have to be changed.
         self.summoner_name = summoner_name
         self.region = region_mappings[region]
+        self.current_patch = get_current_patch()
         # TODO: Make better exceptions and exception handling.
         #  It should be different exceptions if key is invalid and different if player is not found
         try:
@@ -123,7 +126,7 @@ class LeaguePlayer:
         :return: :class:`Dictionary` with matches
         """
         params = {
-            "champion": (get_champion_id(champion) if type(champion) is str else [get_champion_id(ch) for ch in champion]) if champion else None, # I am sincerely sorry for this line
+            "champion": (get_champion_id(champion, current_patch=self.current_patch) if type(champion) is str else [get_champion_id(ch, current_patch=self.current_patch) for ch in champion]) if champion else None, # I am sincerely sorry for this line
             "queue": queue,
             "season": season
         }

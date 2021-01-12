@@ -12,7 +12,7 @@ import sqlite3
 import os
 from .league_api_util import LeaguePlayer
 
-current_season = 10
+current_season = 11
 
 db_path = os.path.join(os.getcwd(), 'server/db/tulesports.db')
 
