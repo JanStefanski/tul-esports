@@ -28,7 +28,7 @@ def get_champion_id(champion_name: str, current_patch:str=None) -> int:
     :return: Int with Champion ID
     """
     req = requests.get(f"https://ddragon.leagueoflegends.com/cdn/{current_patch or get_current_patch()}/data/en_US/champion.json")
-    champion_id = json.loads(req.text)["data"][champion_name.capitalize()]["key"]
+    champion_id = json.loads(req.text)["data"][champion_name]["key"]
     return int(champion_id)
 
 def get_champion_name(champion_id: int, current_patch:str=None) -> str:

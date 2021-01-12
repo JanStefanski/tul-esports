@@ -17,7 +17,7 @@ app.config['CSRF_COOKIE_SAMESITE'] = 'Strict'
 app.config['CSRF_COOKIE_HTTPONLY'] = True
 app.config['CSRF_COOKIE_SECURE'] = True
 
-csrf = SeaSurf(app)
+# csrf = SeaSurf(app)
 
 
 @app.after_request
