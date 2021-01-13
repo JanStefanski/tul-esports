@@ -4,7 +4,6 @@ import os
 CONFIG_ROOT = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(CONFIG_ROOT, 'config.json')
 
-# TODO: League API Key Regex /^(RGAPI)-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/g
 
 class ConfigLoader:
 

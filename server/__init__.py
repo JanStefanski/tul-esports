@@ -56,22 +56,21 @@ def validate_region(region: str) -> bool:
     return region in ["eune", "euw"]
 
 
-@app.route("/get-statistics-report", methods=['GET', 'POST'])
+@app.route("/get-statistics-report", methods=['POST'])
 def stats_renderer():
-    language = request.args.get('lang') or 'en-GB'
-    code = 200
+    language = 'en-GB'
+    # code = 200
     summoner = escape(request.form['summoner'])
     region = escape(request.form['region'])
     navbar = i18n_util.I18n('navBar').load_translation(language)
     if request.method == 'POST' and validate_summoner_name(summoner) and validate_region(region):
         try:
-            pass
-            status = {"name": summoner, "region": region}
+            # status = {"name": summoner, "region": region}
             player = league_api_util.LeaguePlayer(summoner, region)
-            status["ranking"] = player.ranked_positions()
-            status["position"] = player.position
-            status["mastery"] = player.champion_mastery()
-            chmp_id = status["mastery"][0]["championId"]
+            # status["ranking"] = player.ranked_positions()
+            # status["position"] = player.position
+            # status["mastery"] = player.champion_mastery()
+            chmp_id = player.champion_mastery()[0]["championId"]
             skin_name = league_api_util.get_champion_info(champion_id=chmp_id)["data"]
             skin_name = f"{list(skin_name.keys())[0]}_{random.choice(skin_name[list(skin_name.keys())[0]]['skins'])['num']}"
             stats_page_texts = {
