@@ -47,6 +47,24 @@ def save_player(player: LeaguePlayer):
             'INSERT INTO rankings(type, tier, rank, summoner_id, wins, loses, season, lp) VALUES (?,?,?,?,?,?,?,?)',
             player_rankings)
 
+def get_player_position(queue_type, summoner_id):
+    with sqlite3.connect(db_path) as conn:
+        c = conn.cursor()
+        # TODO: Check if usage of """ is secure in this case
+        ranking = c.execute("""
+    select position from (
+        SELECT
+               row_number() over (order by tier desc, rank desc, lp desc) as position,
+       players.summoner_id,
+       r.tier,
+       r.rank,
+       r.lp
+from players
+         inner join (select *
+                     from rankings where season = (?) and type is (?)) r on players.summoner_id = r.summoner_id) where summoner_id is (?);""", (current_season, queue_type, summoner_id))
+        r = (list(ranking) or [[0]])[0][0]
+        return r
+
 
 def get_ranking(limit: int = 5, page: int = 0, season = 10) -> list:
     with sqlite3.connect(db_path) as conn:

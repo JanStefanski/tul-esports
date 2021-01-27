@@ -56,14 +56,20 @@
             </div>
             <div class="row">
                 <div class="col-md-6 ">
-                    <h3>Your rank on solo/duo queue is:</h3>
+                    <h3>{{ statsPage.rankSoloText }}</h3>
                     <img class="mt-sm-2 mb-sm-4 rank-img" src="/static/img/ranked_tiers/Emblem_{{ statsPage.assets.rankedSoloTier }}.png">
                     <h2>{{ statsPage.assets.rankedSoloTier }} {{ statsPage.assets.rankedSoloRank }}</h2>
+                    {% if statsPage.playerSoloPlacement %}
+                        <p>{{ statsPage.positionPlacementText }} {{ statsPage.playerSoloPlacement }} {{ statsPage.positionPlacementText2 }}</p>
+                    {% endif %}
                 </div>
                 <div class="col-md-6">
-                    <h3>Your rank on flex queue is:</h3>
+                    <h3>{{ statsPage.rankFlexText }}</h3>
                     <img class="mt-sm-2 mb-sm-4 rank-img" src="/static/img/ranked_tiers/Emblem_{{ statsPage.assets.rankedFlexTier }}.png">
                     <h2>{{ statsPage.assets.rankedFlexTier }} {{ statsPage.assets.rankedFlexRank }}</h2>
+                    {% if statsPage.playerFlexPlacement %}
+                        <p>{{ statsPage.positionPlacementText }} {{ statsPage.playerFlexPlacement }} {{ statsPage.positionPlacementText2 }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

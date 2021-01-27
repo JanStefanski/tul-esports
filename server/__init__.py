@@ -87,6 +87,7 @@ def stats_renderer():
     summoner = escape(request.form['summoner'])
     region = escape(request.form['region'])
     navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
+    stats_page = i18n_util.I18n('statsPage').load_translation(load_lang(request))
     if request.method == 'POST' and validate_summoner_name(summoner) and validate_region(region):
         try:
             # status = {"name": summoner, "region": region}
@@ -101,11 +102,13 @@ def stats_renderer():
             else:
                 skin_name = league_api_util.get_champion_info(champion_id=chmp_id)["data"]
                 skin_name = f"{list(skin_name.keys())[0]}_{random.choice(skin_name[list(skin_name.keys())[0]]['skins'])['num']}"
-            stats_page_texts = {
+            stats_page_texts = dict(stats_page, **{
                 "currentPatch": player.current_patch,
                 "summonerName": player.summoner_name,
                 "summonerLevel": player.ids['summonerLevel'],
                 "summonerRankAndPosition": player.position.capitalize(),
+                "playerSoloPlacement": db_util.get_player_position('RANKED_SOLO_5x5', player.ids['id']),
+                "playerFlexPlacement": db_util.get_player_position('RANKED_FLEX_SR', player.ids['id']),
                 "assets": {
                     "summonerIcon": player.ids['profileIconId'],
                     "highestMasteryChampionRandomSkin": skin_name,
@@ -114,7 +117,7 @@ def stats_renderer():
                     "rankedFlexTier": rankings.get('RANKED_FLEX_SR')['tier'] if rankings.get('RANKED_FLEX_SR') else "unranked",
                     "rankedFlexRank": rankings.get('RANKED_FLEX_SR')['rank'] if rankings.get('RANKED_FLEX_SR') else "",
                 }
-            }
+            })
             db_util.save_player(player=player)
             resp = make_response(render_template('stats.html', indexPage={}, navBar=navbar, statsPage=stats_page_texts))
             if request.args.get('lang'):
