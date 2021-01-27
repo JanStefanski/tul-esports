@@ -19,7 +19,6 @@ app.config['CSRF_COOKIE_SECURE'] = True
 
 csrf = SeaSurf(app)
 
-
 @app.after_request
 def apply_sec_headers(response):
     # Setting CSP (more info: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
@@ -37,15 +36,42 @@ def apply_sec_headers(response):
     response.headers["X-XSS-Protection"] = "1; mode=block"
     return response
 
+def load_lang(req: request):
+    print(req.headers.get('Accept-Language'))
+    if req.args.get('lang'):
+        pref_lang = request.args.get('lang')
+    elif req.cookies.get('lang'):
+        pref_lang = request.cookies.get('lang')
+    else:
+        pref_lang = 'en-GB'
+    return pref_lang
+
 
 @app.route("/")
 def index_page():
-    language = request.args.get('lang') or 'en-GB'
-    idx_page = i18n_util.I18n('indexPage').load_translation(language)
-    navbar = i18n_util.I18n('navBar').load_translation(language)
+    idx_page = i18n_util.I18n('indexPage').load_translation(load_lang(request))
+    navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
     # TODO: Whole DB util, must decide if it will be MongoDB (probably more work, but more versatile) or SQLite
     ranked_players = db_util.get_ranking()
-    return render_template('index.html', rankedPlayers=enumerate(ranked_players), indexPage=idx_page, navBar=navbar)
+    resp = make_response(render_template('index.html', rankedPlayers=enumerate(ranked_players), indexPage=idx_page, navBar=navbar))
+    if request.args.get('lang'):
+        resp.set_cookie('lang', request.args.get('lang'))
+    return resp
+
+@app.route("/leaderboards")
+def rankings_page():
+    print(request.full_path)
+    allowed_limits = (10, 25, 50)
+    limit = int(request.args.get('limit') or 10) if int(request.args.get('limit') or 10) in allowed_limits else 10
+    page = request.args.get('page') or 1
+    season = int(request.args.get('season') or 10)
+    idx_page = i18n_util.I18n('indexPage').load_translation(load_lang(request))
+    navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
+    ranked_players = db_util.get_ranking(limit=limit, season=season)
+    resp = make_response(render_template('leaderboards.html', rankedPlayers=enumerate(ranked_players), indexPage=idx_page, navBar=navbar))
+    if request.args.get('lang'):
+        resp.set_cookie('lang', request.args.get('lang'))
+    return resp
 
 
 def validate_summoner_name(sname: str) -> bool:
@@ -58,21 +84,23 @@ def validate_region(region: str) -> bool:
 
 @app.route("/get-statistics-report", methods=['POST'])
 def stats_renderer():
-    language = 'en-GB'
-    # code = 200
     summoner = escape(request.form['summoner'])
     region = escape(request.form['region'])
-    navbar = i18n_util.I18n('navBar').load_translation(language)
+    navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
     if request.method == 'POST' and validate_summoner_name(summoner) and validate_region(region):
         try:
             # status = {"name": summoner, "region": region}
             player = league_api_util.LeaguePlayer(summoner, region)
-            # status["ranking"] = player.ranked_positions()
+            player_ranking = player.ranked_positions()
+            rankings = {r['queueType']: r for r in player_ranking}
             # status["position"] = player.position
             # status["mastery"] = player.champion_mastery()
             chmp_id = player.champion_mastery()[0]["championId"]
-            skin_name = league_api_util.get_champion_info(champion_id=chmp_id)["data"]
-            skin_name = f"{list(skin_name.keys())[0]}_{random.choice(skin_name[list(skin_name.keys())[0]]['skins'])['num']}"
+            if summoner == "Qia" and region == "eune":  # I like that skin, so I set it manually
+                skin_name = "Morgana_17"
+            else:
+                skin_name = league_api_util.get_champion_info(champion_id=chmp_id)["data"]
+                skin_name = f"{list(skin_name.keys())[0]}_{random.choice(skin_name[list(skin_name.keys())[0]]['skins'])['num']}"
             stats_page_texts = {
                 "currentPatch": player.current_patch,
                 "summonerName": player.summoner_name,
@@ -80,12 +108,19 @@ def stats_renderer():
                 "summonerRankAndPosition": player.position.capitalize(),
                 "assets": {
                     "summonerIcon": player.ids['profileIconId'],
-                    "highestMasteryChampionRandomSkin": skin_name
+                    "highestMasteryChampionRandomSkin": skin_name,
+                    "rankedSoloTier": rankings.get('RANKED_SOLO_5x5')['tier'] if rankings.get('RANKED_SOLO_5x5') else "unranked",
+                    "rankedSoloRank": rankings.get('RANKED_SOLO_5x5')['rank'] if rankings.get('RANKED_SOLO_5x5') else "",
+                    "rankedFlexTier": rankings.get('RANKED_FLEX_SR')['tier'] if rankings.get('RANKED_FLEX_SR') else "unranked",
+                    "rankedFlexRank": rankings.get('RANKED_FLEX_SR')['rank'] if rankings.get('RANKED_FLEX_SR') else "",
                 }
             }
-            # if request.args.get('save'):
-            #     db_util.save_player(player=player)
-            return render_template('stats.html', indexPage={}, navBar=navbar, statsPage=stats_page_texts)
+            db_util.save_player(player=player)
+            resp = make_response(render_template('stats.html', indexPage={}, navBar=navbar, statsPage=stats_page_texts))
+            if request.args.get('lang'):
+                resp.set_cookie('lang', request.args.get('lang'))
+            return resp
+
         except league_api_util.SummonerNotFoundError:
             code = 400
             status = {"Error": f"Summoner {summoner} not found in {region} region"}

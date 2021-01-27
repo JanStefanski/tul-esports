@@ -76,3 +76,5 @@ server/utils/config/config.json
 server/db/
 
 presentation/
+
+server/static/img/ranked_tiers/

@@ -12,7 +12,7 @@ import sqlite3
 import os
 from .league_api_util import LeaguePlayer
 
-current_season = 11
+current_season = 11 # TODO: It's hardcoded and it should be retrieved somehow
 
 db_path = os.path.join(os.getcwd(), 'server/db/tulesports.db')
 
@@ -43,17 +43,19 @@ def save_player(player: LeaguePlayer):
         player_rankings = [(rp['queueType'], tier_list.index(rp['tier']), rank_list.index(rp['rank']), rp['summonerId'],
                             rp['wins'], rp['losses'], current_season, rp['leaguePoints']) for rp in player_ranked_pos]
         # TODO: Update cause for almost whole queue, it actually would be easier to drop the value and insert a new one
-        # c.executemany(
-        #     'INSERT INTO rankings(type, tier, rank, summoner_id, wins, loses, season, lp) VALUES (?,?,?,?,?,?,?,?)',
-        #     player_rankings)
+        c.executemany(
+            'INSERT INTO rankings(type, tier, rank, summoner_id, wins, loses, season, lp) VALUES (?,?,?,?,?,?,?,?)',
+            player_rankings)
 
 
-def get_ranking(limit: int = 5, page: int = 0) -> list:
+def get_ranking(limit: int = 5, page: int = 0, season = 10) -> list:
     with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
         # TODO: Check if usage of """ is secure in this case
         ranking = c.execute("""
-        SELECT players.summoner_name,
+        SELECT
+               row_number() over (order by tier desc, rank desc, lp desc) as position,
+       players.summoner_name,
        players.profile_icon_id,
        players.role,
        r.tier,
@@ -64,9 +66,8 @@ def get_ranking(limit: int = 5, page: int = 0) -> list:
        r.loses
 from players
          inner join (select *
-                     from (select * from rankings order by tier desc, rank desc, lp desc)
-                     group by summoner_id) r on players.summoner_id = r.summoner_id
-order by tier desc, rank desc, lp desc
-limit (?) offset (?);""", (limit, page * limit))
-        r = [{"name": player[0], "rank": f"{tier_list[player[3]]} {rank_list[player[4]]}", "role": player[2].capitalize()} for player in ranking]
+                     from (select * from rankings where season = (?) order by tier desc, rank desc, lp desc)
+                     group by summoner_id ) r on players.summoner_id = r.summoner_id
+limit (?) offset (?);""", (season, limit, page * limit))
+        r = [{"name": player[1], "rank": f"{tier_list[player[4]]} {rank_list[player[5]]}", "role": player[3].capitalize()} for player in ranking]
         return r

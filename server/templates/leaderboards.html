@@ -10,17 +10,6 @@
     <link rel="stylesheet" href="static/css/Footer-Dark.css">
     <link rel="stylesheet" href="static/css/Highlight-Clean.css">
     <link rel="stylesheet" href="static/css/Navigation-Clean.css">
-    <style>
-    .champion-bg {
-      background: url("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{{statsPage.assets.highestMasteryChampionRandomSkin}}.jpg") top center / cover no-repeat;
-    }
-
-    @media screen and (max-width: 480px) {
-      .champion-bg {
-        background: url("https://ddragon.leagueoflegends.com/cdn/img/champion/loading/{{statsPage.assets.highestMasteryChampionRandomSkin}}.jpg") center / cover no-repeat;
-      }
-    }
-</style>
 </head>
 
 <body>
@@ -36,34 +25,50 @@
                     <a class="dropdown-toggle nav-link" data-toggle="dropdown"
                        aria-expanded="false" href="#">{{ navBar.navLanguageSelector }}</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/?lang=en-GB">English</a>
-                        <a class="dropdown-item" href="/?lang=pl">Polski</a>
+                        <a class="dropdown-item" href="?lang=en-GB">English</a>
+                        <a class="dropdown-item" href="?lang=pl">Polski</a>
                     </div>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
-<div class="champion-bg">
-    <div class="student-profile-main without-bg">
-        <div class="container text-center">
-            <div class="row">
-                <div class="mt-sm-3 mb-sm-5 col-md-12">
-                    <img class="rounded-circle summoner-icon" alt="Summoner Icon" src="https://ddragon.leagueoflegends.com/cdn/{{statsPage.currentPatch}}/img/profileicon/{{statsPage.assets.summonerIcon}}.png">
-                    <h1>{{ statsPage.summonerName }}</h1>
-                    <p>Level {{ statsPage.summonerLevel }} {{ statsPage.summonerRankAndPosition }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 ">
-                    <h3>Your rank on solo/duo queue is:</h3>
-                    <img class="mt-sm-2 mb-sm-4 rank-img" src="/static/img/ranked_tiers/Emblem_{{ statsPage.assets.rankedSoloTier }}.png">
-                    <h2>{{ statsPage.assets.rankedSoloTier }} {{ statsPage.assets.rankedSoloRank }}</h2>
-                </div>
-                <div class="col-md-6">
-                    <h3>Your rank on flex queue is:</h3>
-                    <img class="mt-sm-2 mb-sm-4 rank-img" src="/static/img/ranked_tiers/Emblem_{{ statsPage.assets.rankedFlexTier }}.png">
-                    <h2>{{ statsPage.assets.rankedFlexTier }} {{ statsPage.assets.rankedFlexRank }}</h2>
+<div class="index-ranking">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ranking">
+                <h2 class="text-center">{{ indexPage.topPlayersHeading }}</h2>
+                <p class="text-center">{{ indexPage.topPlayersDesc }}</p>
+                <p class="text-right font-weight-lighter">Per page:
+                    <a href="?limit=10">10</a>
+                    <a href="?limit=25">25</a>
+                    <a href="?limit=50">50</a>
+                </p>
+                <p class="text-right font-weight-lighter">Season:
+                    <a href="?season=10">10</a>
+                    <a href="?season=11">11</a>
+                </p>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{{ indexPage.rankingTablePositionColumnHeading }}</th>
+                                <th>{{ indexPage.rankingTableSummonerNameColumnHeading }}</th>
+                                <th>{{ indexPage.rankingTableRankColumnHeading }}</th>
+                                <th>{{ indexPage.rankingTableRoleColumnHeading }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="ranking-table-body">
+                        {% for pos, player in rankedPlayers %}
+                            <tr>
+                                <td>{{ pos + 1 }}</td>
+                                <td>{{ player.name }}</td>
+                                <td>{{ player.rank }}</td>
+                                <td>{{ player.role }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

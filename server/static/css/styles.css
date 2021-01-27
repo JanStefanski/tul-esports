@@ -88,3 +88,22 @@
 .ranking .disclaimer {
     font-size: 10px;
 }
+
+.rank-img {
+    width: 200px;
+}
+
+.without-bg {
+  background: #313437b7;
+}
+
+.summoner-icon {
+  margin-bottom: 15px;
+  width: 128px;
+  height: 128px;
+}
+
+.student-profile-main {
+    padding: 50px 0;
+    text-shadow: 0px -7px 7px rgb(0 0 0)
+}
