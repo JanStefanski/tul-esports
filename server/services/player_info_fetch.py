@@ -25,12 +25,12 @@ def fetch_player_info(summoner, region):
             "assets": {
                 "summonerIcon": player.ids['profileIconId'],
                 "highestMasteryChampionRandomSkin": skin_name,
-                "rankedSoloTier": rankings.get('RANKED_SOLO_5x5')['tier'] if rankings.get(
-                    'RANKED_SOLO_5x5') else "unranked",
+                "rankedSoloTier": rankings.get('RANKED_SOLO_5x5')['tier'].capitalize() if rankings.get(
+                    'RANKED_SOLO_5x5') else "Unranked",
                 "rankedSoloRank": rankings.get('RANKED_SOLO_5x5')['rank'] if rankings.get(
                     'RANKED_SOLO_5x5') else "",
-                "rankedFlexTier": rankings.get('RANKED_FLEX_SR')['tier'] if rankings.get(
-                    'RANKED_FLEX_SR') else "unranked",
+                "rankedFlexTier": rankings.get('RANKED_FLEX_SR')['tier'].capitalize() if rankings.get(
+                    'RANKED_FLEX_SR') else "Unranked",
                 "rankedFlexRank": rankings.get('RANKED_FLEX_SR')['rank'] if rankings.get(
                     'RANKED_FLEX_SR') else "",
             }
@@ -49,12 +49,12 @@ def fetch_player_info(summoner, region):
             "assets": {
                 "summonerIcon": player['profileIconId'],
                 "highestMasteryChampionRandomSkin": skin_name,
-                "rankedSoloTier": rankings.get('RANKED_SOLO_5x5')['tier'] if rankings.get(
-                    'RANKED_SOLO_5x5') else "unranked",
+                "rankedSoloTier": rankings.get('RANKED_SOLO_5x5')['tier'].capitalize() if rankings.get(
+                    'RANKED_SOLO_5x5') else "Unranked",
                 "rankedSoloRank": rankings.get('RANKED_SOLO_5x5')['rank'] if rankings.get(
                     'RANKED_SOLO_5x5') else "",
-                "rankedFlexTier": rankings.get('RANKED_FLEX_SR')['tier'] if rankings.get(
-                    'RANKED_FLEX_SR') else "unranked",
+                "rankedFlexTier": rankings.get('RANKED_FLEX_SR')['tier'].capitalize() if rankings.get(
+                    'RANKED_FLEX_SR') else "Unranked",
                 "rankedFlexRank": rankings.get('RANKED_FLEX_SR')['rank'] if rankings.get(
                     'RANKED_FLEX_SR') else "",
             }
