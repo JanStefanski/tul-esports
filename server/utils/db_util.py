@@ -169,7 +169,7 @@ where
             return False
 
 
-def get_ranking(limit: int = 5, page: int = 0, season=10) -> list:
+def get_ranking(limit: int = 5, page: int = 0, season=current_season) -> list:
     with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
         # TODO: Check if usage of """ is secure in this case
