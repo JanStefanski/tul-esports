@@ -49,7 +49,7 @@ def download_assets(assets_location:str = 'server/static/img/ranked_tiers'):
         os.makedirs(assets_folder)
         print("Destination folders created")
     file = downloader("https://static.developer.riotgames.com/docs/lol/ranked-emblems.zip")
-    with ZipFile(os.path.join(file, 'ranked-emblems.zip'), 'r') as assets:
+    with ZipFile(file, 'r') as assets:
         os.chdir(assets_location)
         assets.extractall()
     print("Finished downloading assets.")
