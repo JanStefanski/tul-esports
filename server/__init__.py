@@ -1,21 +1,16 @@
 import secrets
 
 from .services.player_info_fetch import fetch_player_info
-from flask import Flask, make_response, render_template, request, jsonify, redirect, escape
-from .utils import league_api_util, i18n_util, db_util
+from flask import Flask, make_response, render_template, request, redirect, escape, cli
+from .utils import i18n_util, db_util
 from flask_seasurf import SeaSurf
+from .utils.config_loader import ConfigLoader
 
 app = Flask(__name__)
 
-# TODO: Actual environment vars instead of hardcoded keys, secrets & vars
-app.config['SECRET_KEY'] = 'gh48hfsjkdh943uro2jf92pafj483la3'
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SECURE'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
-app.config['CSRF_COOKIE_NAME'] = 'csrfmiddlewaretoken'
-app.config['CSRF_COOKIE_SAMESITE'] = 'Strict'
-app.config['CSRF_COOKIE_HTTPONLY'] = True
-app.config['CSRF_COOKIE_SECURE'] = True
+cli.load_dotenv()
+
+ConfigLoader(app)
 
 csrf = SeaSurf(app)
 

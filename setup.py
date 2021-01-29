@@ -1,3 +1,5 @@
+from shutil import copyfile
+
 from server.utils.league_api_util import get_current_patch
 from server.utils.db_util import init_db
 import os
@@ -48,6 +50,17 @@ def download_assets(downloads_location:str = 'server/download', assets_location:
         assets.extractall()
     print("Finished downloading assets.")
 
+def update_env(key: str, value: str):
+    if not os.path.exists('.env'):
+        copyfile('.env_sample', '.env')
+    with open('.env', 'r+') as env:
+        env_vars = {line.split('=')[0]: line.split('=')[1].replace('\n', '') for line in env.readlines()}
+        env_vars[key] = value
+        updated_vars = [f"{key}={value}\n" for key, value in env_vars.items()]
+        env.seek(0)
+        env.writelines(updated_vars)
+        env.truncate()
+
 def update_lol_key(key: str) -> bool:
     """
     Updates League of Legends API Key to new one.
@@ -58,9 +71,7 @@ def update_lol_key(key: str) -> bool:
     if not key:
         return False
     if re.search("^(RGAPI)-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$", key):
-        config_path = os.path.join(os.getcwd(), 'server/utils/config/config.json')
-        with open(config_path, 'w+') as config_file:
-            json.dump({"league_api_key": key} , config_file)
+        update_env('LEAGUE_API_KEY', key)
         return True
     else:
         return False
@@ -69,8 +80,6 @@ def update_lol_key(key: str) -> bool:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Setup TUL E-sports.")
     parser.add_argument("-ulk", "--update_league_key", metavar='API_KEY', help="Instead of doing whole setup, update only League API Key")
-    parser.add_argument("--heroku", help="Use special heroku deployment configuration",
-                        action="store_true")
     args = parser.parse_args()
     if args.update_league_key:
         if not update_lol_key(args.update_league_key):
@@ -78,29 +87,25 @@ if __name__ == '__main__':
         else:
             print("Key updated!")
         sys.exit()
-    if not args.heroku:
-        print("TUL Esports Server Setup - Welcome")
-        print("First, we need to set up a League of Legends API Key")
-        print("If you don't have it already, please get it on https://developer.riotgames.com/")
-        league_key = None
-        while not update_lol_key(league_key):
-            if not league_key is None:
-                print("Invalid Key!")
-            league_key = input("Enter new League API Key: ")
-        else:
-            print("Key Updated")
-        if input("Do you want to download Data Dragon? (Not necessary, only to explore League Assets) <y/N>").lower() == "y":
-            download_data_dragon()
-        if input("Do you need to download assets? (only download if this is a first time setup) <y/N>").lower() == "y":
-            download_assets()
-        print("Creating and setting up database...")
-        init_db()
-        print("Setup Finished!")
-        print("You can now run the server with:")
-        print("$  waitress-serve server:app")
+    print("TUL Esports Server Setup - Welcome")
+    print("First, we need to set up a League of Legends API Key")
+    print("If you don't have it already, please get it on https://developer.riotgames.com/")
+    league_key = None
+    while not update_lol_key(league_key):
+        if not league_key is None:
+            print("Invalid Key!")
+        league_key = input("Enter new League API Key: ")
     else:
-        print("Doing heroku setup...")
+        print("Key Updated")
+    if input("Do you want to download Data Dragon? (Not necessary, only to explore League Assets) <y/N>").lower() == "y":
+        download_data_dragon()
+    if input("Do you need to download assets? (only download if this is a first time setup) <y/N>").lower() == "y":
         download_assets()
-        init_db()
+    print("Creating and setting up database...")
+    init_db()
+    print("Setup Finished!")
+    print("You can now run the server with:")
+    print("$  waitress-serve server:app")
+
 else:
     raise ImportError("This script cannot be imported!")
