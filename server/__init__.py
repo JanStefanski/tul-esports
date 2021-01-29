@@ -64,7 +64,7 @@ def rankings_page():
     allowed_limits = (10, 25, 50)
     limit = int(request.args.get('limit') or 10) if int(request.args.get('limit') or 10) in allowed_limits else 10
     page = request.args.get('page') or 1
-    season = int(request.args.get('season') or 10)
+    season = int(request.args.get('season') or 11)
     idx_page = i18n_util.I18n('indexPage').load_translation(load_lang(request))
     navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
     ranked_players = db_util.get_ranking(limit=limit, season=season)

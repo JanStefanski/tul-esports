@@ -23,6 +23,9 @@ rank_list = ["IV", "III", "II", "I"]
 
 
 def init_db():
+    db_dir = os.path.dirname(db_path)
+    if not os.path.exists(db_dir):
+        os.makedirs(db_dir)
     with sqlite3.connect(db_path) as conn:
         print("creating db...")
         c = conn.cursor()
