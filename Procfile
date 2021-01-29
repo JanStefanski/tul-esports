@@ -1,1 +1,1 @@
-web: waitress-serve --listen "*:$PORT" --ident 'Apache/2.2.17 (Unix)' --trusted-proxy '*' --trusted-proxy-headers 'x-forwarded-for x-forwarded-proto x-forwarded-port' --log-untrusted-proxy-headers --clear-untrusted-proxy-headers --threads ${WEB_CONCURRENCY:-4} server:app
+web: setup.py --heroku && waitress-serve --listen "*:$PORT" --ident 'Apache/2.2.17 (Unix)' --trusted-proxy '*' --trusted-proxy-headers 'x-forwarded-for x-forwarded-proto x-forwarded-port' --log-untrusted-proxy-headers --clear-untrusted-proxy-headers --threads ${WEB_CONCURRENCY:-4} server:app
