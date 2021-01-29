@@ -17,12 +17,16 @@ current_season = 11  # TODO: It's hardcoded and it should be retrieved somehow
 
 db_path = os.path.join(os.getcwd(), 'server/db/tulesports.db')
 
+print(sqlite3.connect(db_path))
+
 tier_list = ["IRON", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "MASTER", "GRANDMASTER", "CHALLENGER"]
 
 rank_list = ["IV", "III", "II", "I"]
 
 
 def init_db():
+    with sqlite3.connect(db_path) as conn:
+        print("creating db...")
     with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
         c.execute("""

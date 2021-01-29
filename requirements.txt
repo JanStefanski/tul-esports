@@ -3,4 +3,3 @@ Flask~=1.1.2
 requests~=2.25.1
 git+https://github.com/JanStefanski/flask-seasurf.git@0.2.4#egg=flask-seasurf
 python-dotenv~=0.15.0
-rich~=9.6.1
