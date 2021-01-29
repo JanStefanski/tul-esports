@@ -14,13 +14,13 @@
 
 <body>
 <nav class="navbar navbar-expand-md navigation-clean navbar-dark">
-    <div class="container"><a class="navbar-brand" href="#">{{ navBar.navLogo }}</a>
+    <div class="container"><a class="navbar-brand" href="/">{{ navBar.navLogo }}</a>
         <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="/leaderboards">{{ navBar.navLeaderboardsLinkText }}<br></a></li>
-                <li class="nav-item"><a class="nav-link" href="#">{{ navBar.navGetReportLinkText }}<br></a></li>
+                <li class="nav-item"><a class="nav-link" href="/">{{ navBar.navGetReportLinkText }}<br></a></li>
                 <li class="nav-item dropdown">
                     <a class="dropdown-toggle nav-link" data-toggle="dropdown"
                        aria-expanded="false" href="#">{{ navBar.navLanguageSelector }}</a>
@@ -33,39 +33,21 @@
         </div>
     </div>
 </nav>
-<div class="highlight-clean">
-    <div class="container">
-        <div class="intro">
-            <h2 class="text-center">{{ indexPage.mainContentHeader }}<br></h2>
-            <p class="text-center">{{ indexPage.mainContentDesc }}</p>
-            <form action="/get-statistics-report" method="post">
-                <div class="form-group">
-                    <input class="form-control" type="text" id="summoner" name="summoner" placeholder="{{ indexPage.summonerNameFormLabel }}">
-                </div>
-                <div class="form-group buttons">
-                    <label for="region">{{ indexPage.regionFormLabel }}</label>
-                    <select id="region" name="region" class="form-control">
-                        <optgroup label="{{ indexPage.regionOptGroupEuropeLabel }}">
-                            <option value="eune" selected>EUNE</option>
-                            <option value="euw">EUW</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token() }}">
-                <div class="form-group buttons">
-                    <input class="btn btn-primary" type="submit" value="{{ indexPage.getStatsFormButton }}">
-<!--                    <span class="spinner-border spinner-border-sm" role="status"></span>-->
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 <div class="index-ranking">
     <div class="container">
         <div class="row">
             <div class="col-md-12 ranking">
                 <h2 class="text-center">{{ indexPage.topPlayersHeading }}</h2>
                 <p class="text-center">{{ indexPage.topPlayersDesc }}</p>
+                <p class="text-right font-weight-lighter">Per page:
+                    <a href="?limit=10">10</a>
+                    <a href="?limit=25">25</a>
+                    <a href="?limit=50">50</a>
+                </p>
+                <p class="text-right font-weight-lighter">Season:
+                    <a href="?season=10">10</a>
+                    <a href="?season=11">11</a>
+                </p>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -88,7 +70,6 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="text-center"><a class="btn btn-secondary" href="/leaderboards">{{ indexPage.fullRankingButtonText }}</a></p>
             </div>
         </div>
     </div>

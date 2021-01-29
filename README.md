@@ -3,7 +3,6 @@
 ### Requirements
 + Python 3.6+ (Recommended 3.8.6)
 + [League of Legends API Key](https://developer.riotgames.com/)
-+ MongoDB Cluster
 
 
 

@@ -1,0 +1,1 @@
+console.log('%cHey!😎🤙\n%cThis app is only just a %cWork in Progress PoC\n%cPlease do not treat it as completely working version', 'font-size: 32px', 'color: #00FFFF', 'background: #f00 ;color: #fff', 'color: #00FFFF');

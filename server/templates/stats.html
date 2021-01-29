@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="{{ indexPage.lang }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{{ indexPage.title }}</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/Footer-Dark.css">
+    <link rel="stylesheet" href="static/css/Highlight-Clean.css">
+    <link rel="stylesheet" href="static/css/Navigation-Clean.css">
+    <style nonce="{{ styleNonce }}">
+    .champion-bg {
+      background: url("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{{statsPage.assets.highestMasteryChampionRandomSkin}}.jpg") top center / cover no-repeat;
+    }
+
+    @media screen and (max-width: 480px) {
+      .champion-bg {
+        background: url("https://ddragon.leagueoflegends.com/cdn/img/champion/loading/{{statsPage.assets.highestMasteryChampionRandomSkin}}.jpg") center / cover no-repeat;
+      }
+    }
+</style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-md navigation-clean navbar-dark">
+    <div class="container"><a class="navbar-brand" href="/">{{ navBar.navLogo }}</a>
+        <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navcol-1">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="/leaderboards">{{ navBar.navLeaderboardsLinkText }}<br></a></li>
+                <li class="nav-item"><a class="nav-link" href="#">{{ navBar.navGetReportLinkText }}<br></a></li>
+                <li class="nav-item dropdown">
+                    <a class="dropdown-toggle nav-link" data-toggle="dropdown"
+                       aria-expanded="false" href="#">{{ navBar.navLanguageSelector }}</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/?lang=en-GB">English</a>
+                        <a class="dropdown-item" href="/?lang=pl">Polski</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="champion-bg">
+    <div class="student-profile-main without-bg">
+        <div class="container text-center">
+            <div class="row">
+                <div class="mt-sm-3 mb-sm-5 col-md-12">
+                    <img class="rounded-circle summoner-icon" alt="Summoner Icon" src="https://ddragon.leagueoflegends.com/cdn/{{statsPage.currentPatch}}/img/profileicon/{{statsPage.assets.summonerIcon}}.png">
+                    <h1>{{ statsPage.summonerName }}</h1>
+                    <p>Level {{ statsPage.summonerLevel }} {{ statsPage.summonerRankAndPosition }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 ">
+                    <h3>{{ statsPage.rankSoloText }}</h3>
+                    <img class="mt-sm-2 mb-sm-4 rank-img" src="/static/img/ranked_tiers/Emblem_{{ statsPage.assets.rankedSoloTier }}.png">
+                    <h2>{{ statsPage.assets.rankedSoloTier }} {{ statsPage.assets.rankedSoloRank }}</h2>
+                    {% if statsPage.playerSoloPlacement %}
+                        <p>{{ statsPage.positionPlacementText }} {{ statsPage.playerSoloPlacement }} {{ statsPage.positionPlacementText2 }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h3>{{ statsPage.rankFlexText }}</h3>
+                    <img class="mt-sm-2 mb-sm-4 rank-img" src="/static/img/ranked_tiers/Emblem_{{ statsPage.assets.rankedFlexTier }}.png">
+                    <h2>{{ statsPage.assets.rankedFlexTier }} {{ statsPage.assets.rankedFlexRank }}</h2>
+                    {% if statsPage.playerFlexPlacement %}
+                        <p>{{ statsPage.positionPlacementText }} {{ statsPage.playerFlexPlacement }} {{ statsPage.positionPlacementText2 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer-dark">
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p>{{ indexPage.footerDisclaimer }}</p>
+                    <p></p>
+                </div>
+            </div>
+            <p class="copyright">
+                Made with 😎 🤙 by<br>
+                <a href="mailto:234719@edu.p.lodz.pl">Jan Stefanski</a> & <a href="mailto:230132@edu.p.lodz.pl">Marek Siuda</a> © 2020
+            </p>
+        </div>
+    </footer>
+</div>
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/main.js"></script>
+<script src="static/bootstrap/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

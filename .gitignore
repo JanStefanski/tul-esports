@@ -69,4 +69,12 @@ pythonenv*
 
 /.idea/
 
-server/config/config.json
+server/utils/config/config.json
+/design/
+/server/download/
+
+server/db/
+
+presentation/
+
+server/static/img/ranked_tiers/

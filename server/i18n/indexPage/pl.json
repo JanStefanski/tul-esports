@@ -1,0 +1,20 @@
+{
+    "lang": "pl",
+    "localeFullName": "Polski",
+    "title": "TUL Esports - LoL",
+    "mainContentHeader": "Statystyki League of Legends",
+    "mainContentDesc": "Sprawdź swoje statystyki z League of Legends i porównaj je z innymi studentami!",
+    "summonerNameFormLabel": "Nazwa przywoływacza",
+    "regionFormLabel": "Region",
+    "regionOptGroupEuropeLabel": "Europa",
+    "getStatsFormButton": "Sprawdź statystyki",
+    "topPlayersHeading": "Najlepsi Gracze",
+    "topPlayersDesc": "Sprawdź, którzy studenci są w tym momencie na czele rankingu!",
+    "rankingTablePositionColumnHeading": "Pozycja",
+    "rankingTableSummonerNameColumnHeading": "Nazwa Przywoływacza",
+    "rankingTableRankColumnHeading": "Ranga",
+    "rankingTableRoleColumnHeading": "Rola",
+    "rankingDisclaimer": "Prezentowane statystyki pochodzą z 10 sezonu, ponieważ obecny sezon się dopiero rozpoczął.",
+    "fullRankingButtonText": "Sprawdź pełen ranking!",
+    "footerDisclaimer": "TUL Esports isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc."
+}
