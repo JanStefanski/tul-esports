@@ -154,8 +154,8 @@ where
                     'main_champion': ref[0][6],
                     "ranking": {
                         rank[0]: {
-                            'tier': rank[1],
-                            'rank': rank[2],
+                            'tier': tier_list[rank[1]],
+                            'rank': rank_list[rank[2]],
                             'wins': rank[3],
                             'loses': rank[4],
                             'lp': rank[5]
