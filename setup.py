@@ -31,7 +31,6 @@ def downloader(download_url: str, file_name: str = None, location: str = 'server
 def download_data_dragon(version:str= None):
     """
     Helper Function used to download data dragon if necessary.
-     Highly doubt it would be really that necessary, but just in case.
     :param version: Patch version of league that data dragon should be fetched from
     :return: None
     """
@@ -44,6 +43,11 @@ def download_data_dragon(version:str= None):
         print("Finished. You can explore Data Dragon in the directory: {}".format(os.path.join(file, version)))
 
 def download_assets(assets_location:str = 'server/static/img/ranked_tiers'):
+    """
+    Helper Function used to download assets if necessary.
+    :param assets_location: (optional) Location to save assets in
+    :return: None
+    """
     assets_folder = os.path.join(os.getcwd(), assets_location)
     if not os.path.exists(assets_folder):
         os.makedirs(assets_folder)
