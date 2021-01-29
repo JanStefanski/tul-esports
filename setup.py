@@ -1,4 +1,5 @@
 from server.utils.league_api_util import get_current_patch
+from server.utils.db_util import init_db
 import os
 import argparse
 import re
@@ -64,9 +65,6 @@ def update_lol_key(key: str) -> bool:
     else:
         return False
 
-def create_db(db_name:str = "tulesp.sqlite"):
-    # TODO: When DB will be ready implement creation of db in setup
-    pass
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Setup TUL E-sports.")
@@ -95,12 +93,14 @@ if __name__ == '__main__':
             download_data_dragon()
         if input("Do you need to download assets? (only download if this is a first time setup) <y/N>").lower() == "y":
             download_assets()
+        print("Creating and setting up database...")
+        init_db()
         print("Setup Finished!")
         print("You can now run the server with:")
         print("$  waitress-serve server:app")
     else:
         print("Doing heroku setup...")
         download_assets()
-        create_db()
+        init_db()
 else:
     raise ImportError("This script cannot be imported!")

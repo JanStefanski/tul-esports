@@ -22,6 +22,47 @@ tier_list = ["IRON", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND", "MASTER"
 rank_list = ["IV", "III", "II", "I"]
 
 
+def init_db():
+    with sqlite3.connect(db_path) as conn:
+        c = conn.cursor()
+        c.execute("""
+        create table if not exists players
+        (
+            account_id      text not null,
+            summoner_id     text not null
+                constraint players_pk
+                    primary key,
+            summoner_name   text not null,
+            region          text not null,
+            profile_icon_id int,
+            summoner_level  int,
+            puuid,
+            role            text,
+            refreshed_at    timestamp default current_timestamp,
+            main_champion   text
+        );
+        """)
+        c.execute("""
+        create unique index if not exists table_name_summoner_id_uindex on players (summoner_id);
+        """)
+        c.execute("""
+        create table if not exists rankings
+        (
+            type        text not null,
+            tier        int  not null,
+            rank        int  not null,
+            summoner_id int  not null
+                constraint rankings_players_summoner_id_fk
+                    references players,
+            wins        int  not null,
+            loses       int  not null,
+            season      int,
+            lp          int
+        );
+        """)
+
+
+
 def save_player(player: LeaguePlayer, favourite_champ: str):
     with sqlite3.connect(db_path) as conn:
         # summoner_id, account_id, summoner_name, region, profile_icon_id, summoner_level, puuid
@@ -75,7 +116,8 @@ def get_player_info(summoner_name, summoner_region):
     with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
         refreshed_at = c.execute(
-            'select refreshed_at, summoner_id, summoner_name, summoner_level, profile_icon_id, role, main_champion from players where summoner_name = (?) and region = (?);', (summoner_name, region_mappings[summoner_region]))
+            'select refreshed_at, summoner_id, summoner_name, summoner_level, profile_icon_id, role, main_champion from players where summoner_name = (?) and region = (?);',
+            (summoner_name, region_mappings[summoner_region]))
         ref = [a for a in refreshed_at]
         if ref:
             ref = ref
