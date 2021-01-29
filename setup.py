@@ -1,20 +1,20 @@
+import os
+import argparse
+import sys
+import tarfile
+import requests
 from shutil import copyfile
 from server.utils.league_api_util import get_current_patch
 from server.utils.db_util import init_db
-import os
-import argparse
-import re
-import sys
-import tarfile
+from re import search
 from zipfile import ZipFile
-import requests
 
 def downloader(download_url: str, file_name: str = None, location: str = 'server/download'):
     """
     Helper function for downloading files.
     :param download_url: URL to download file from
     :param file_name: (optional) Name that file should be saved as
-    :param location:
+    :param location: (optional) Location where file should be downloaded to
     :return:
     """
     file_name = file_name or os.path.basename(download_url)
@@ -55,6 +55,12 @@ def download_assets(assets_location:str = 'server/static/img/ranked_tiers'):
     print("Finished downloading assets.")
 
 def update_env(key: str, value: str):
+    """
+    Function that helps with updating .env file
+    :param key: Name of the key that should be added/updated
+    :param value: Value that should be added/updated
+    :return:
+    """
     if not os.path.exists('.env'):
         copyfile('.env_sample', '.env')
     with open('.env', 'r+') as env:
@@ -74,7 +80,7 @@ def update_lol_key(key: str) -> bool:
     # TODO: When .env will be done properly, this will have to be changed.
     if not key:
         return False
-    if re.search("^(RGAPI)-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$", key):
+    if search("^(RGAPI)-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$", key):
         update_env('LEAGUE_API_KEY', key)
         return True
     else:
