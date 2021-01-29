@@ -1,6 +1,5 @@
-# from base64 import b64encode
-# from os import urandom
-import random
+import secrets
+
 from .services.player_info_fetch import fetch_player_info
 from flask import Flask, make_response, render_template, request, jsonify, redirect, escape
 from .utils import league_api_util, i18n_util, db_util
@@ -20,18 +19,20 @@ app.config['CSRF_COOKIE_SECURE'] = True
 
 csrf = SeaSurf(app)
 
+@app.before_request
+def generate_nonce():
+    nonce = secrets.token_urlsafe()
+    app.jinja_env.globals['styleNonce']= nonce
 
 @app.after_request
 def apply_sec_headers(response):
     # Setting CSP (more info: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
-    # TODO: Change unsafe-inline to unsafe inline with nonce in styles later.
-    #  generating nonce: nonce = lambda length: filter(lambda s: s.isalpha(), b64encode(urandom(length * 2)))[:length]
     response.headers[
-        "Content-Security-Policy"] = "default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
+        "Content-Security-Policy"] = f"default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
     response.headers[
-        "X-Content-Security-Policy"] = "default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
+        "X-Content-Security-Policy"] = f"default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
     response.headers[
-        "X-WebKit-CSP"] = "default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
+        "X-WebKit-CSP"] = f"default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
@@ -58,7 +59,7 @@ def index_page():
     resp = make_response(
         render_template('index.html', rankedPlayers=enumerate(ranked_players), indexPage=idx_page, navBar=navbar))
     if request.args.get('lang'):
-        resp.set_cookie('lang', request.args.get('lang'))
+        resp.set_cookie('lang', request.args.get('lang'), secure=True, httponly=True, samesite='Strict')
     return resp
 
 
@@ -76,7 +77,7 @@ def rankings_page():
         render_template('leaderboards.html', rankedPlayers=enumerate(ranked_players), indexPage=idx_page,
                         navBar=navbar))
     if request.args.get('lang'):
-        resp.set_cookie('lang', request.args.get('lang'))
+        resp.set_cookie('lang', request.args.get('lang'), secure=True, httponly=True, samesite='Strict')
     return resp
 
 
@@ -100,8 +101,9 @@ def stats_renderer():
             stats_page_texts = dict(stats_page, **assets_and_strings)
             resp = make_response(render_template('stats.html', indexPage={}, navBar=navbar, statsPage=stats_page_texts))
             if request.args.get('lang'):
-                resp.set_cookie('lang', request.args.get('lang'))
-        except Exception:
+                resp.set_cookie('lang', request.args.get('lang'), secure=True, httponly=True, samesite='Strict')
+        except Exception as e:
+            print(e)
             resp = make_response(render_template('error.html', errorPage={"errorHeader": "Error",
                                                                           "errorMessage": f"There is a problem with your request, check if summoner {summoner} exists for {region} region"}, navBar=navbar),
                                  400)
