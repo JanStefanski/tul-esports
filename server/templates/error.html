@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ indexPage.lang }}">
+<html>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>{{ indexPage.title }}</title>
+    <title>{{ errorPage.errorHeader }}</title>
     <link rel="stylesheet" href="static/css/styles.css">
     <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/Footer-Dark.css">
@@ -20,7 +20,7 @@
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="/leaderboards">{{ navBar.navLeaderboardsLinkText }}<br></a></li>
-                <li class="nav-item"><a class="nav-link" href="/">{{ navBar.navGetReportLinkText }}<br></a></li>
+                <li class="nav-item"><a class="nav-link" href="#">{{ navBar.navGetReportLinkText }}<br></a></li>
                 <li class="nav-item dropdown">
                     <a class="dropdown-toggle nav-link" data-toggle="dropdown"
                        aria-expanded="false" href="#">{{ navBar.navLanguageSelector }}</a>
@@ -33,53 +33,16 @@
         </div>
     </div>
 </nav>
-<div class="index-ranking">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 ranking">
-                <h2 class="text-center">{{ indexPage.topPlayersHeading }}</h2>
-                <p class="text-center">{{ indexPage.topPlayersDesc }}</p>
-                <p class="text-right font-weight-lighter">Per page:
-                    <a href="?limit=10">10</a>
-                    <a href="?limit=25">25</a>
-                    <a href="?limit=50">50</a>
-                </p>
-                <p class="text-right font-weight-lighter">Season:
-                    <a href="?season=10">10</a>
-                    <a href="?season=11">11</a>
-                </p>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>{{ indexPage.rankingTablePositionColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableSummonerNameColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableRankColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableRoleColumnHeading }}</th>
-                            </tr>
-                        </thead>
-                        <tbody class="ranking-table-body">
-                        {% for pos, player in rankedPlayers %}
-                            <tr>
-                                <td>{{ pos + 1 }}</td>
-                                <td>{{ player.name }}</td>
-                                <td>{{ player.rank }}</td>
-                                <td>{{ player.role }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container text-center">
+        <h1>{{ errorPage.errorHeader }}<br></h1>
+        <p>{{ errorPage.errorMessage }}</p>
 </div>
 <div class="footer-dark">
     <footer>
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <p>{{ indexPage.footerDisclaimer }}</p>
+                    <p>TUL Esports isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>
                     <p></p>
                 </div>
             </div>

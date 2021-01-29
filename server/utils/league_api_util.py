@@ -81,7 +81,6 @@ class LeaguePlayer:
         #  It should be different exceptions if key is invalid and different if player is not found
         try:
             self.ids = self.__get_summoner_ids()
-            self.position = self.__determine_primary_position()
         except KeyError:
             raise SummonerNotFoundError(summoner_name, region)
 
@@ -142,7 +141,7 @@ class LeaguePlayer:
         matches = matches["matches"] if "matches" in matches else []  # Kind of cursed line if you ask me
         return matches
 
-    def __determine_primary_position(self, min_games: int = 20) -> str:
+    def determine_primary_position(self, min_games: int = 20) -> str:
         """
         Attempts to determine primary position of the player.
         If not enough games in queue type are found to determine, it looks in the next queue.
