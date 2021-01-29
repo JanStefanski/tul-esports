@@ -1,21 +1,16 @@
 import secrets
 
 from .services.player_info_fetch import fetch_player_info
-from flask import Flask, make_response, render_template, request, jsonify, redirect, escape
-from .utils import league_api_util, i18n_util, db_util
+from flask import Flask, make_response, render_template, request, redirect, escape, cli
+from .utils import i18n_util, db_util
 from flask_seasurf import SeaSurf
+from .utils.config_loader import ConfigLoader
 
 app = Flask(__name__)
 
-# TODO: Actual environment vars instead of hardcoded keys, secrets & vars
-app.config['SECRET_KEY'] = 'gh48hfsjkdh943uro2jf92pafj483la3'
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SECURE'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
-app.config['CSRF_COOKIE_NAME'] = 'csrfmiddlewaretoken'
-app.config['CSRF_COOKIE_SAMESITE'] = 'Strict'
-app.config['CSRF_COOKIE_HTTPONLY'] = True
-app.config['CSRF_COOKIE_SECURE'] = True
+cli.load_dotenv()
+
+ConfigLoader(app)
 
 csrf = SeaSurf(app)
 
@@ -69,7 +64,7 @@ def rankings_page():
     allowed_limits = (10, 25, 50)
     limit = int(request.args.get('limit') or 10) if int(request.args.get('limit') or 10) in allowed_limits else 10
     page = request.args.get('page') or 1
-    season = int(request.args.get('season') or 10)
+    season = int(request.args.get('season') or 11)
     idx_page = i18n_util.I18n('indexPage').load_translation(load_lang(request))
     navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
     ranked_players = db_util.get_ranking(limit=limit, season=season)

@@ -8,7 +8,7 @@
 import requests
 import json
 from typing import Iterable
-from .config.config_loader import ConfigLoader
+from os import environ
 
 def get_current_patch() -> str:
     """
@@ -73,7 +73,7 @@ class LeaguePlayer:
         :param region: A region where the summoner has been registered. Available options: "eune", "euw"
         """
         region_mappings = {"eune": "eun1", "euw": "euw1"}
-        self.key = ConfigLoader().league_api_key # TODO: When .env will be done properly, this will have to be changed.
+        self.key = environ.get('LEAGUE_API_KEY')
         self.summoner_name = summoner_name
         self.region = region_mappings[region]
         self.current_patch = get_current_patch()
