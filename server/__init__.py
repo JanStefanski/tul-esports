@@ -36,7 +36,7 @@ def apply_sec_headers(response):
 
 
 def load_lang(req: request):
-    print(req.headers.get('Accept-Language'))
+    # print(req.headers.get('Accept-Language'))
     if req.args.get('lang'):
         pref_lang = request.args.get('lang')
     elif req.cookies.get('lang'):
@@ -65,11 +65,11 @@ def rankings_page():
     limit = int(request.args.get('limit') or 10) if int(request.args.get('limit') or 10) in allowed_limits else 10
     page = request.args.get('page') or 1
     season = int(request.args.get('season') or 11)
-    idx_page = i18n_util.I18n('indexPage').load_translation(load_lang(request))
+    l_page = i18n_util.I18n('leaderboardsPage').load_translation(load_lang(request))
     navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
     ranked_players = db_util.get_ranking(limit=limit, season=season)
     resp = make_response(
-        render_template('leaderboards.html', rankedPlayers=enumerate(ranked_players), indexPage=idx_page,
+        render_template('leaderboards.html', rankedPlayers=enumerate(ranked_players), leaderboardsPage=l_page,
                         navBar=navbar))
     if request.args.get('lang'):
         resp.set_cookie('lang', request.args.get('lang'), secure=True, httponly=True, samesite='Strict')
@@ -86,11 +86,12 @@ def validate_region(region: str) -> bool:
 
 @app.route("/get-statistics-report", methods=['POST'])
 def stats_renderer():
-    summoner = escape(request.form['summoner'])
+    summoner = request.form['summoner']
     region = escape(request.form['region'])
     navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
     stats_page = i18n_util.I18n('statsPage').load_translation(load_lang(request))
     if request.method == 'POST' and validate_summoner_name(summoner) and validate_region(region):
+        summoner = escape(summoner)
         try:
             assets_and_strings = fetch_player_info(summoner, region)
             stats_page_texts = dict(stats_page, **assets_and_strings)

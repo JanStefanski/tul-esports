@@ -1,99 +1,49 @@
-<!DOCTYPE html>
-<html lang="{{ indexPage.lang }}">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>{{ indexPage.title }}</title>
-    <link rel="stylesheet" href="static/css/styles.css">
-    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="static/css/Footer-Dark.css">
-    <link rel="stylesheet" href="static/css/Highlight-Clean.css">
-    <link rel="stylesheet" href="static/css/Navigation-Clean.css">
-</head>
-
-<body>
-<nav class="navbar navbar-expand-md navigation-clean navbar-dark">
-    <div class="container"><a class="navbar-brand" href="/">{{ navBar.navLogo }}</a>
-        <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
-                class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navcol-1">
-            <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="/leaderboards">{{ navBar.navLeaderboardsLinkText }}<br></a></li>
-                <li class="nav-item"><a class="nav-link" href="/">{{ navBar.navGetReportLinkText }}<br></a></li>
-                <li class="nav-item dropdown">
-                    <a class="dropdown-toggle nav-link" data-toggle="dropdown"
-                       aria-expanded="false" href="#">{{ navBar.navLanguageSelector }}</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="?lang=en-GB">English</a>
-                        <a class="dropdown-item" href="?lang=pl">Polski</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<div class="index-ranking">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 ranking">
-                <h2 class="text-center">{{ indexPage.topPlayersHeading }}</h2>
-                <p class="text-center">{{ indexPage.topPlayersDesc }}</p>
-                <p class="text-right font-weight-lighter">Per page:
-                    <a href="?limit=10">10</a>
-                    <a href="?limit=25">25</a>
-                    <a href="?limit=50">50</a>
-                </p>
-                <p class="text-right font-weight-lighter">Season:
-                    <a href="?season=10">10</a>
-                    <a href="?season=11">11</a>
-                </p>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
+{% extends "base.html" %}
+{% block lang %}{{ leaderboardsPage.lang }}{% endblock %}
+{% block title %}{{ leaderboardsPage.title }}{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+    <div class="index-ranking">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 ranking">
+                    <h2 class="text-center">{{ leaderboardsPage.topPlayersHeading }}</h2>
+                    <p class="text-center">{{ leaderboardsPage.topPlayersDesc }}</p>
+                    <p class="text-right font-weight-lighter">{{ leaderboardsPage.perPage }}:
+                        <a href="?limit=10">10</a>
+                        <a href="?limit=25">25</a>
+                        <a href="?limit=50">50</a>
+                    </p>
+                    <p class="text-right font-weight-lighter">{{ leaderboardsPage.season }}:
+                        <a href="?season=10">10</a>
+                        <a href="?season=11">11</a>
+                    </p>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
                             <tr>
-                                <th>{{ indexPage.rankingTablePositionColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableSummonerNameColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableRankColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableRoleColumnHeading }}</th>
+                                <th>{{ leaderboardsPage.rankingTablePositionColumnHeading }}</th>
+                                <th>{{ leaderboardsPage.rankingTableSummonerNameColumnHeading }}</th>
+                                <th>{{ leaderboardsPage.rankingTableRankColumnHeading }}</th>
+                                <th>{{ leaderboardsPage.rankingTableRoleColumnHeading }}</th>
                             </tr>
-                        </thead>
-                        <tbody class="ranking-table-body">
-                        {% for pos, player in rankedPlayers %}
+                            </thead>
+                            <tbody class="ranking-table-body">
+                            {% for pos, player in rankedPlayers %}
                             <tr>
                                 <td>{{ pos + 1 }}</td>
                                 <td>{{ player.name }}</td>
                                 <td>{{ player.rank }}</td>
                                 <td>{{ player.role }}</td>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="footer-dark">
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <p>{{ indexPage.footerDisclaimer }}</p>
-                    <p></p>
-                </div>
-            </div>
-            <p class="copyright">
-                Made with 😎 🤙 by<br>
-                <a href="mailto:234719@edu.p.lodz.pl">Jan Stefanski</a> & <a href="mailto:230132@edu.p.lodz.pl">Marek Siuda</a> © 2020
-            </p>
-        </div>
-    </footer>
-</div>
-<script src="static/js/jquery.min.js"></script>
-<script src="static/js/main.js"></script>
-<script src="static/bootstrap/js/bootstrap.min.js"></script>
-
-</body>
-
-</html>
+{% endblock %}

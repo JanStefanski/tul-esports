@@ -1,4 +1,7 @@
 {
+  "lang": "en-GB",
+  "localeFullName": "English (United Kingdom)",
+  "title": "TUL Esports - LoL",
   "rankSoloText": "Your rank on solo/duo queue is:",
   "rankFlexText": "Your rank on flex queue is:",
   "positionPlacementText": "Which gives you",
