@@ -31,14 +31,22 @@
                                 <th>{{ leaderboardsPage.rankingTableRoleColumnHeading }}</th>
                             </tr>
                             </thead>
-                            <tbody class="ranking-table-body">
+                            <tbody>
                             {% for player in rankedPlayers %}
-                            <tr>
-                                <td>{{ player.position }}</td>
-                                <td>{{ player.name }}</td>
-                                <td>{{ player.rank }}</td>
-                                <td>{{ player.role }}</td>
-                            </tr>
+                            {% if currentPage == 0 and player.position == 1 %}
+                                <tr class="first-pos">
+                            {% elif currentPage == 0 and player.position == 2 %}
+                                <tr class="second-pos">
+                            {% elif currentPage == 0 and player.position == 3 %}
+                                <tr class="third-pos">
+                            {% else %}
+                                <tr>
+                            {% endif %}
+                                    <td>{{ player.position }}</td>
+                                    <td>{{ player.name }}</td>
+                                    <td>{{ player.rank }}</td>
+                                    <td>{{ player.role }}</td>
+                                </tr>
                             {% endfor %}
                             </tbody>
                         </table>
