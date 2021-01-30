@@ -53,9 +53,9 @@
                                 </tr>
                             </thead>
                             <tbody class="ranking-table-body">
-                            {% for pos, player in rankedPlayers %}
+                            {% for player in rankedPlayers %}
                                 <tr>
-                                    <td>{{ pos + 1 }}</td>
+                                    <td>{{ player.position }}</td>
                                     <td>{{ player.name }}</td>
                                     <td>{{ player.rank }}</td>
                                     <td>{{ player.role }}</td>

@@ -13,9 +13,9 @@
                     <h2 class="text-center">{{ leaderboardsPage.topPlayersHeading }}</h2>
                     <p class="text-center">{{ leaderboardsPage.topPlayersDesc }}</p>
                     <p class="text-right font-weight-lighter">{{ leaderboardsPage.perPage }}:
-                        <a href="?limit=10">10</a>
-                        <a href="?limit=25">25</a>
-                        <a href="?limit=50">50</a>
+                        {% for limit in allowedLimits %}
+                            <a href="?limit={{ limit }}">{{ limit }}</a>
+                        {% endfor %}
                     </p>
                     <p class="text-right font-weight-lighter">{{ leaderboardsPage.season }}:
                         <a href="?season=10">10</a>
@@ -32,9 +32,9 @@
                             </tr>
                             </thead>
                             <tbody class="ranking-table-body">
-                            {% for pos, player in rankedPlayers %}
+                            {% for player in rankedPlayers %}
                             <tr>
-                                <td>{{ pos + 1 }}</td>
+                                <td>{{ player.position }}</td>
                                 <td>{{ player.name }}</td>
                                 <td>{{ player.rank }}</td>
                                 <td>{{ player.role }}</td>
@@ -42,6 +42,25 @@
                             {% endfor %}
                             </tbody>
                         </table>
+                        <div class="pages-nav">
+                            <ul class="pagination ">
+                                <li class="page-item">
+                                  <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                  <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                  </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -165,7 +165,17 @@
   }
 }
 
+
 #logoVideo {
     max-height: 38px;
     vertical-align: bottom;
+}
+
+.beta-sign {
+    font-size: 0.6rem;
+    background: #0487f9;
+    padding: .1rem .2rem;
+    border-radius: 4px;
+    vertical-align: text-top;
+    margin-left: .1rem;
 }
