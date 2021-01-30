@@ -1,7 +1,7 @@
 .navigation-clean {
   background: #fff;
-  padding-top: .75rem;
-  padding-bottom: .75rem;
+  padding-top: .375rem;
+  padding-bottom: .375rem;
   color: #333;
   border-radius: 0;
   box-shadow: none;
@@ -11,8 +11,8 @@
 
 @media (min-width:768px) {
   .navigation-clean {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
   }
 }
 
@@ -33,6 +33,10 @@
   height: 100%;
   display: inline-block;
   margin-right: 10px;
+  width: auto;
+}
+.navigation-clean .navbar-brand video {
+  display: inline-block;
   width: auto;
 }
 
