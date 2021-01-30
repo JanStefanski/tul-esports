@@ -1,0 +1,13 @@
+{
+  "lang": "en-GB",
+  "localeFullName": "English (United Kingdom)",
+  "title": "TUL Esports - LoL",
+  "topPlayersHeading": "Top Players",
+  "topPlayersDesc": "Check out students that are at the top of their game right now!",
+  "rankingTablePositionColumnHeading": "Position",
+  "rankingTableSummonerNameColumnHeading": "Summoner Name",
+  "rankingTableRankColumnHeading": "Rank",
+  "rankingTableRoleColumnHeading": "Role",
+  "perPage": "Per page",
+  "season": "Season"
+}

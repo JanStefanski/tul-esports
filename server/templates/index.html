@@ -1,118 +1,69 @@
-<!DOCTYPE html>
-<html lang="{{ indexPage.lang }}">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>{{ indexPage.title }}</title>
-    <link rel="stylesheet" href="static/css/styles.css">
-    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="static/css/Footer-Dark.css">
+{% extends "base.html" %}
+{% block lang %}{{ indexPage.lang }}{% endblock %}
+{% block title %}{{ indexPage.title }}{% endblock %}
+{% block head %}
+    {{ super() }}
     <link rel="stylesheet" href="static/css/Highlight-Clean.css">
-    <link rel="stylesheet" href="static/css/Navigation-Clean.css">
-</head>
-
-<body>
-<nav class="navbar navbar-expand-md navigation-clean navbar-dark">
-    <div class="container"><a class="navbar-brand" href="#">{{ navBar.navLogo }}</a>
-        <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
-                class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navcol-1">
-            <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="/leaderboards">{{ navBar.navLeaderboardsLinkText }}<br></a></li>
-                <li class="nav-item"><a class="nav-link" href="#">{{ navBar.navGetReportLinkText }}<br></a></li>
-                <li class="nav-item dropdown">
-                    <a class="dropdown-toggle nav-link" data-toggle="dropdown"
-                       aria-expanded="false" href="#">{{ navBar.navLanguageSelector }}</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="?lang=en-GB">English</a>
-                        <a class="dropdown-item" href="?lang=pl">Polski</a>
+{% endblock %}
+{% block content %}
+    <div class="highlight-clean">
+        <div class="container">
+            <div class="intro">
+                <h2 class="text-center">{{ indexPage.mainContentHeader }}<br></h2>
+                <p class="text-center">{{ indexPage.mainContentDesc }}</p>
+                <form action="/get-statistics-report" method="post">
+                    <div class="form-group">
+                        <input class="form-control" type="text" id="summoner" name="summoner" placeholder="{{ indexPage.summonerNameFormLabel }}">
                     </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<div class="highlight-clean">
-    <div class="container">
-        <div class="intro">
-            <h2 class="text-center">{{ indexPage.mainContentHeader }}<br></h2>
-            <p class="text-center">{{ indexPage.mainContentDesc }}</p>
-            <form action="/get-statistics-report" method="post">
-                <div class="form-group">
-                    <input class="form-control" type="text" id="summoner" name="summoner" placeholder="{{ indexPage.summonerNameFormLabel }}">
-                </div>
-                <div class="form-group buttons">
-                    <label for="region">{{ indexPage.regionFormLabel }}</label>
-                    <select id="region" name="region" class="form-control">
-                        <optgroup label="{{ indexPage.regionOptGroupEuropeLabel }}">
-                            <option value="eune" selected>EUNE</option>
-                            <option value="euw">EUW</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token() }}">
-                <div class="form-group buttons">
-                    <input class="btn btn-primary" type="submit" value="{{ indexPage.getStatsFormButton }}">
-<!--                    <span class="spinner-border spinner-border-sm" role="status"></span>-->
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div class="index-ranking">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 ranking">
-                <h2 class="text-center">{{ indexPage.topPlayersHeading }}</h2>
-                <p class="text-center">{{ indexPage.topPlayersDesc }}</p>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>{{ indexPage.rankingTablePositionColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableSummonerNameColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableRankColumnHeading }}</th>
-                                <th>{{ indexPage.rankingTableRoleColumnHeading }}</th>
-                            </tr>
-                        </thead>
-                        <tbody class="ranking-table-body">
-                        {% for pos, player in rankedPlayers %}
-                            <tr>
-                                <td>{{ pos + 1 }}</td>
-                                <td>{{ player.name }}</td>
-                                <td>{{ player.rank }}</td>
-                                <td>{{ player.role }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <p class="text-center"><a class="btn btn-secondary" href="/leaderboards">{{ indexPage.fullRankingButtonText }}</a></p>
+                    <div class="form-group buttons">
+                        <label for="region">{{ indexPage.regionFormLabel }}</label>
+                        <select id="region" name="region" class="form-control">
+                            <optgroup label="{{ indexPage.regionOptGroupEuropeLabel }}">
+                                <option value="eune" selected>EUNE</option>
+                                <option value="euw">EUW</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token() }}">
+                    <div class="form-group buttons">
+                        <input class="btn btn-primary" type="submit" value="{{ indexPage.getStatsFormButton }}">
+    <!--                    <span class="spinner-border spinner-border-sm" role="status"></span>-->
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
-<div class="footer-dark">
-    <footer>
+    <div class="index-ranking">
         <div class="container">
             <div class="row">
-                <div class="col">
-                    <p>{{ indexPage.footerDisclaimer }}</p>
-                    <p></p>
+                <div class="col-md-12 ranking">
+                    <h2 class="text-center">{{ indexPage.topPlayersHeading }}</h2>
+                    <p class="text-center">{{ indexPage.topPlayersDesc }}</p>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{{ indexPage.rankingTablePositionColumnHeading }}</th>
+                                    <th>{{ indexPage.rankingTableSummonerNameColumnHeading }}</th>
+                                    <th>{{ indexPage.rankingTableRankColumnHeading }}</th>
+                                    <th>{{ indexPage.rankingTableRoleColumnHeading }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="ranking-table-body">
+                            {% for pos, player in rankedPlayers %}
+                                <tr>
+                                    <td>{{ pos + 1 }}</td>
+                                    <td>{{ player.name }}</td>
+                                    <td>{{ player.rank }}</td>
+                                    <td>{{ player.role }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-center"><a class="btn btn-secondary" href="/leaderboards">{{ indexPage.fullRankingButtonText }}</a></p>
                 </div>
             </div>
-            <p class="copyright">
-                Made with 😎 🤙 by<br>
-                <a href="mailto:234719@edu.p.lodz.pl">Jan Stefanski</a> & <a href="mailto:230132@edu.p.lodz.pl">Marek Siuda</a> © 2020
-            </p>
         </div>
-    </footer>
-</div>
-<script src="static/js/jquery.min.js"></script>
-<script src="static/js/main.js"></script>
-<script src="static/bootstrap/js/bootstrap.min.js"></script>
-
-</body>
-
-</html>
+    </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{
+  "lang": "pl",
+  "localeFullName": "Polski",
+  "title": "TUL Esports - LoL",
+  "topPlayersHeading": "Najlepsi Gracze",
+  "topPlayersDesc": "Sprawdź, którzy studenci są w tym momencie na czele rankingu!",
+  "rankingTablePositionColumnHeading": "Pozycja",
+  "rankingTableSummonerNameColumnHeading": "Nazwa Przywoływacza",
+  "rankingTableRankColumnHeading": "Ranga",
+  "rankingTableRoleColumnHeading": "Rola",
+  "perPage": "Na stronę",
+  "season": "Sezon"
+}

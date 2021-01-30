@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+    <html lang="{% block lang %}{% endblock %}">
+    <head>
+        {% block head %}
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+            <title>{% block title %}{% endblock %}</title>
+            <link rel="stylesheet" href="static/css/styles.css">
+            <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+            <link rel="stylesheet" href="static/css/Footer-Dark.css">
+            <link rel="stylesheet" href="static/css/Navigation-Clean.css">
+        {% endblock %}
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navigation-clean navbar-dark">
+            <div class="container"><a class="navbar-brand" href="/">{{ navBar.navLogo }}</a>
+                <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
+                        class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="/leaderboards">{{ navBar.navLeaderboardsLinkText }}<br></a></li>
+                        <li class="nav-item"><a class="nav-link" href="/">{{ navBar.navGetReportLinkText }}<br></a></li>
+                        <li class="nav-item dropdown">
+                            <a class="dropdown-toggle nav-link" data-toggle="dropdown"
+                               aria-expanded="false" href="#">{{ navBar.navLanguageSelector }}</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/?lang=en-GB">English</a>
+                                <a class="dropdown-item" href="/?lang=pl">Polski</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% block content %}{% endblock %}
+        <div class="footer-dark">
+            <footer>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <p>TUL Esports isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>
+                            <p></p>
+                        </div>
+                    </div>
+                    <p class="copyright">
+                        Made with 😎 🤙 by<br>
+                        <a href="mailto:234719@edu.p.lodz.pl">Jan Stefanski</a> & <a href="mailto:230132@edu.p.lodz.pl">Marek Siuda</a> © 2020
+                    </p>
+                </div>
+            </footer>
+        </div>
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/main.js"></script>
+        <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>
