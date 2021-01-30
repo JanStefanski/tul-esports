@@ -165,3 +165,7 @@
   }
 }
 
+#logoVideo {
+    max-height: 38px;
+    vertical-align: bottom;
+}

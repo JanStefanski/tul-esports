@@ -3,6 +3,7 @@
 {% block title %}{{ statsPage.title }}{% endblock %}
 {% block head %}
     {{ super() }}
+    <link rel="stylesheet" href="static/css/stats.css">
     <style nonce="{{ styleNonce }}">
         .champion-bg {
           background: url("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{{statsPage.assets.highestMasteryChampionRandomSkin}}.jpg") top center / cover no-repeat;
