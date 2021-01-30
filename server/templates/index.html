@@ -4,9 +4,12 @@
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="static/css/Highlight-Clean.css">
+    <link rel="stylesheet" href="static/css/rankings.css">
+    <link rel="stylesheet" href="static/css/styles.css">
 {% endblock %}
 {% block content %}
     <div class="highlight-clean">
+        <div id="particles-js"></div>
         <div class="container">
             <div class="intro">
                 <h2 class="text-center">{{ indexPage.mainContentHeader }}<br></h2>
@@ -50,9 +53,9 @@
                                 </tr>
                             </thead>
                             <tbody class="ranking-table-body">
-                            {% for pos, player in rankedPlayers %}
+                            {% for player in rankedPlayers %}
                                 <tr>
-                                    <td>{{ pos + 1 }}</td>
+                                    <td>{{ player.position }}</td>
                                     <td>{{ player.name }}</td>
                                     <td>{{ player.rank }}</td>
                                     <td>{{ player.role }}</td>
@@ -66,4 +69,6 @@
             </div>
         </div>
     </div>
+<script src="static/js/particles.min.js"></script>
+<script src="static/js/particles-init.js"></script>
 {% endblock %}

@@ -169,10 +169,11 @@ where
             return False
 
 
-def get_ranking(limit: int = 5, page: int = 0, season=current_season) -> list:
+def get_ranking(limit: int = 5, page: int = 0, season=current_season) -> tuple:
     with sqlite3.connect(db_path) as conn:
         c = conn.cursor()
-        # TODO: Check if usage of """ is secure in this case
+        count_query = c.execute('SELECT count() as cnt from players inner join (select * from (select * from rankings where season = (?) order by tier desc, rank desc, lp desc) group by summoner_id ) r on players.summoner_id = r.summoner_id;', [season])
+        b = [cnt[0] for cnt in count_query][0]
         ranking = c.execute("""
         SELECT
                row_number() over (order by tier desc, rank desc, lp desc) as position,
@@ -190,6 +191,6 @@ from players
                      from (select * from rankings where season = (?) order by tier desc, rank desc, lp desc)
                      group by summoner_id ) r on players.summoner_id = r.summoner_id
 limit (?) offset (?);""", (season, limit, page * limit))
-        r = [{"name": player[1], "rank": f"{tier_list[player[4]]} {rank_list[player[5]]}",
+        r = [{"position": player[0],"name": player[1], "rank": f"{tier_list[player[4]]} {rank_list[player[5]]}",
               "role": player[3].capitalize()} for player in ranking]
-        return r
+        return b, r

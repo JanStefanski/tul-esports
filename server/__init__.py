@@ -1,4 +1,5 @@
 import secrets
+from math import ceil
 
 from .services.player_info_fetch import fetch_player_info
 from flask import Flask, make_response, render_template, request, redirect, escape, cli
@@ -50,9 +51,9 @@ def load_lang(req: request):
 def index_page():
     idx_page = i18n_util.I18n('indexPage').load_translation(load_lang(request))
     navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
-    ranked_players = db_util.get_ranking()
+    ranked_players = db_util.get_ranking()[1]
     resp = make_response(
-        render_template('index.html', rankedPlayers=enumerate(ranked_players), indexPage=idx_page, navBar=navbar))
+        render_template('index.html', rankedPlayers=ranked_players, indexPage=idx_page, navBar=navbar))
     if request.args.get('lang'):
         resp.set_cookie('lang', request.args.get('lang'), secure=True, httponly=True, samesite='Strict')
     return resp
@@ -60,17 +61,20 @@ def index_page():
 
 @app.route("/leaderboards")
 def rankings_page():
-    print(request.full_path)
+    param_parser = lambda param_key, param_val: "?" + "&".join(([f"{param_value}={request.args.get(param_value)}" for param_value in request.args] + [f"{param_key}={str(param_val)}"]) if not request.args.get(param_key) else [f"{param_value}={request.args.get(param_value)}".replace(param_key+'='+request.args.get(param_value), param_key+'='+str(param_val)) for param_value in request.args])
     allowed_limits = (10, 25, 50)
-    limit = int(request.args.get('limit') or 10) if int(request.args.get('limit') or 10) in allowed_limits else 10
-    page = request.args.get('page') or 1
+    limit = int(request.args.get('limit') or allowed_limits[0]) if int(request.args.get('limit') or allowed_limits[0]) in allowed_limits else allowed_limits[0]
+    page = int(request.args.get('page') or 0)
     season = int(request.args.get('season') or 11)
     l_page = i18n_util.I18n('leaderboardsPage').load_translation(load_lang(request))
     navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
-    ranked_players = db_util.get_ranking(limit=limit, season=season)
+    ranking = db_util.get_ranking(limit=limit, season=season, page=page)
+    all_ranking_records = ranking[0]
+    pages = range(ceil(all_ranking_records / limit))
+    ranked_players = ranking[1]
     resp = make_response(
-        render_template('leaderboards.html', rankedPlayers=enumerate(ranked_players), leaderboardsPage=l_page,
-                        navBar=navbar))
+        render_template('leaderboards.html', rankedPlayers=ranked_players, leaderboardsPage=l_page,
+                        navBar=navbar, limit=limit, pages=pages, allowedLimits=allowed_limits, paramParser=param_parser))
     if request.args.get('lang'):
         resp.set_cookie('lang', request.args.get('lang'), secure=True, httponly=True, samesite='Strict')
     return resp
