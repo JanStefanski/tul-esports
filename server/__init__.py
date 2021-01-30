@@ -61,7 +61,6 @@ def index_page():
 
 @app.route("/leaderboards")
 def rankings_page():
-    print(request.full_path)
     param_parser = lambda param_key, param_val: "?" + "&".join(([f"{param_value}={request.args.get(param_value)}" for param_value in request.args] + [f"{param_key}={str(param_val)}"]) if not request.args.get(param_key) else [f"{param_value}={request.args.get(param_value)}".replace(param_key+'='+request.args.get(param_value), param_key+'='+str(param_val)) for param_value in request.args])
     allowed_limits = (10, 25, 50)
     limit = int(request.args.get('limit') or allowed_limits[0]) if int(request.args.get('limit') or allowed_limits[0]) in allowed_limits else allowed_limits[0]
@@ -72,7 +71,6 @@ def rankings_page():
     ranking = db_util.get_ranking(limit=limit, season=season, page=page)
     all_ranking_records = ranking[0]
     pages = range(ceil(all_ranking_records / limit))
-    print(pages)
     ranked_players = ranking[1]
     resp = make_response(
         render_template('leaderboards.html', rankedPlayers=ranked_players, leaderboardsPage=l_page,
