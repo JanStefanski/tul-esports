@@ -86,11 +86,12 @@ def validate_region(region: str) -> bool:
 
 @app.route("/get-statistics-report", methods=['POST'])
 def stats_renderer():
-    summoner = escape(request.form['summoner'])
+    summoner = request.form['summoner']
     region = escape(request.form['region'])
     navbar = i18n_util.I18n('navBar').load_translation(load_lang(request))
     stats_page = i18n_util.I18n('statsPage').load_translation(load_lang(request))
     if request.method == 'POST' and validate_summoner_name(summoner) and validate_region(region):
+        summoner = escape(summoner)
         try:
             assets_and_strings = fetch_player_info(summoner, region)
             stats_page_texts = dict(stats_page, **assets_and_strings)
