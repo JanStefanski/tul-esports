@@ -24,11 +24,11 @@ def generate_nonce():
 def apply_sec_headers(response):
     # Setting CSP (more info: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
     response.headers[
-        "Content-Security-Policy"] = f"default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
+        "Content-Security-Policy"] = f"default-src 'none'; script-src 'self'; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; form-action 'self';"
     response.headers[
-        "X-Content-Security-Policy"] = f"default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
+        "X-Content-Security-Policy"] = f"default-src 'none'; script-src 'self'; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; form-action 'self';"
     response.headers[
-        "X-WebKit-CSP"] = f"default-src 'none'; script-src 'self' http://localhost:3000/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' http://localhost:3000/api/collect; frame-ancestors 'none'; form-action 'self';"
+        "X-WebKit-CSP"] = f"default-src 'none'; script-src 'self'; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; form-action 'self';"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
