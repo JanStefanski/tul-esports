@@ -13,7 +13,7 @@ cli.load_dotenv()
 
 ConfigLoader(app)
 
-csrf = SeaSurf(app)
+# csrf = SeaSurf(app)
 
 @app.before_request
 def generate_nonce():
