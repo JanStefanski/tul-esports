@@ -2,7 +2,7 @@ import secrets
 from math import ceil
 
 from .services.player_info_fetch import fetch_player_info
-from flask import Flask, make_response, render_template, request, redirect, escape, cli
+from flask import Flask, make_response, render_template, request, redirect, escape, cli, send_from_directory
 from .utils import i18n_util, db_util
 from flask_seasurf import SeaSurf
 from .utils.config_loader import ConfigLoader
@@ -24,11 +24,11 @@ def generate_nonce():
 def apply_sec_headers(response):
     # Setting CSP (more info: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
     response.headers[
-        "Content-Security-Policy"] = f"default-src 'none'; script-src 'self'; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; form-action 'self';"
+        "Content-Security-Policy"] = f"default-src 'none'; script-src 'self' https://umami-stefanski-tech.herokuapp.com/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' https://umami-stefanski-tech.herokuapp.com/api/collect; frame-ancestors 'none'; form-action 'self';"
     response.headers[
-        "X-Content-Security-Policy"] = f"default-src 'none'; script-src 'self'; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; form-action 'self';"
+        "X-Content-Security-Policy"] = f"default-src 'none'; script-src 'self' https://umami-stefanski-tech.herokuapp.com/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' https://umami-stefanski-tech.herokuapp.com/api/collect; frame-ancestors 'none'; form-action 'self';"
     response.headers[
-        "X-WebKit-CSP"] = f"default-src 'none'; script-src 'self'; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; form-action 'self';"
+        "X-WebKit-CSP"] = f"default-src 'none'; script-src 'self' https://umami-stefanski-tech.herokuapp.com/; object-src 'none'; style-src 'self' 'nonce-{app.jinja_env.globals['styleNonce']}'; img-src 'self' https://ddragon.leagueoflegends.com/ data: 'unsafe-eval'; media-src 'self'; frame-src; font-src 'self'; connect-src 'self' https://umami-stefanski-tech.herokuapp.com/api/collect; frame-ancestors 'none'; form-action 'self';"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
@@ -113,6 +113,10 @@ def stats_renderer():
                 400)
     return resp
 
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 # 404 page copied from apache
 @app.errorhandler(404)
@@ -122,6 +126,5 @@ def sec_404(error):
 
 # Dir traversal easter egg
 @app.route("/.htaccess")
-@app.route("/sitemap.xml")
 def sec_redirect():
     return redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
