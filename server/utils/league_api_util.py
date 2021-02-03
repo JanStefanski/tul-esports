@@ -63,6 +63,29 @@ class SummonerNotFoundError(Exception):
         err = f"Summoner {summoner_name} does not exist in {region} region"
         super().__init__(err)
 
+class ServiceUnavailable:
+    """Raised when Riot games is doing something what prevent the page from working"""
+    def __init__(self):
+        err = f"Service unavailable, please try again later"
+        super().__init__(err)
+
+class Error404:
+    """Raised when data not found"""
+    def __init__(self):
+        err = f"Data not found"
+        super().__init__(err)
+
+class Error403:
+
+    def __init__(self):
+        err = f"Key not found"
+        super().__init__(err)
+
+class Error429:
+
+    def __init__(self):
+        err = f"Please try again later"
+        super().__init__(err)
 
 class LeaguePlayer:
 
@@ -81,8 +104,9 @@ class LeaguePlayer:
         #  It should be different exceptions if key is invalid and different if player is not found
         try:
             self.ids = self.__get_summoner_ids()
-        except KeyError:
+        except SummonerNotFound:
             raise SummonerNotFoundError(summoner_name, region)
+
 
     def __get_summoner_ids(self) -> dict:
         req = requests.get(
