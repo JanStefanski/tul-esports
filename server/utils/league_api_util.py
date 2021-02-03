@@ -104,7 +104,7 @@ class LeaguePlayer:
         #  It should be different exceptions if key is invalid and different if player is not found
         try:
             self.ids = self.__get_summoner_ids()
-        except SummonerNotFound:
+        except KeyError:
             raise SummonerNotFoundError(summoner_name, region)
 
 
