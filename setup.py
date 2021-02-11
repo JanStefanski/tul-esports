@@ -53,9 +53,12 @@ def download_assets(assets_location:str = 'server/static/img/ranked_tiers'):
         os.makedirs(assets_folder)
         print("Destination folders created")
     file = downloader("https://static.developer.riotgames.com/docs/lol/ranked-emblems.zip")
+    downloader("https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/0-0.png", file_name="Emblem_Unranked.png")
     with ZipFile(file, 'r') as assets:
         os.chdir(assets_location)
         assets.extractall()
+    print(os.getcwd())
+    copyfile(os.path.join(os.getcwd(), '../../../download/Emblem_Unranked.png'), 'Emblem_Unranked.png')
     print("Finished downloading assets.")
 
 def update_env(key: str, value: str):
